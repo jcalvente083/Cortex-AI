@@ -1,0 +1,26 @@
+name: cortex_ai
+description: "App para diagnóstico de Parkinson por voz mediante Modelos de IA."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.0
+  record: ^6.2.0
+  path_provider: ^2.1.2
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/textos.txt
