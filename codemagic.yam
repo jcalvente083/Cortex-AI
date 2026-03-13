@@ -1,0 +1,32 @@
+workflows:
+  ios-release-sideload:
+    name: iOS Release (Sin firma para Sideloadly)
+    # Usamos un Mac con chip M1 para que compile rapidísimo
+    instance_type: mac_mini_m1
+    environment:
+      flutter: stable
+      xcode: latest
+    scripts:
+      - name: Obtener dependencias de Flutter
+        script: flutter pub get
+
+      - name: Construir app para iOS en modo Release sin firma
+        script: flutter build ios --release --no-codesign
+
+      - name: Empaquetar a .ipa perfecto para Sideloadly
+        script: |
+          # Navegamos a la carpeta donde Flutter deja el código compilado
+          cd build/ios/iphoneos
+          
+          # Creamos la carpeta Payload (¡Codemagic lo hace bien a la primera!)
+          mkdir Payload
+          
+          # Metemos la app dentro del Payload
+          mv Runner.app Payload/
+          
+          # Lo comprimimos todo en un archivo .ipa listo para ti
+          zip -r CortexAI_Release.ipa Payload
+
+    artifacts:
+      # Le decimos a Codemagic que te entregue este archivo al terminar
+      - build/ios/iphoneos/CortexAI_Release.ipa
