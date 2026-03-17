@@ -272,7 +272,7 @@ class _MainScreenState extends State<MainScreen> {
               ),
               if (_audioPath != null) ...[
                 const SizedBox(height: 8),
-                const Text("✅ Audio grabado correctamente", textAlign: TextAlign.center, style: TextStyle(color: Colors.green)),
+                const Text("Audio grabado correctamente", textAlign: TextAlign.center, style: TextStyle(color: Colors.green)),
               ],
 
               const Divider(height: 40),
