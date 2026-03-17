@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
-import 'dart:math';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(const ParkinsonDiagnosisApp());
@@ -23,6 +24,15 @@ class ParkinsonDiagnosisApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+      // --- CONFIGURACIÓN DE IDIOMA PARA LA FECHA (dd/mm/aaaa) ---
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('es', 'ES'), // Español
+      ],
       home: const MainScreen(),
     );
   }
@@ -38,13 +48,12 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   String _textoALeer = "Cargando texto...";
   DateTime? _fechaNacimiento;
-  int? _sexo; // 0 para Mujer, 1 para Hombre (ajústalo según tu API)
+  int? _sexo;
 
   final _audioRecorder = AudioRecorder();
   bool _isRecording = false;
   String? _audioPath;
 
-  // IMPORTANTE: Cambia esta IP según uses emulador o dispositivo físico
   final String _apiUrl = "http://api.jcalvente083.qzz.io/diagnostico";
 
   @override
@@ -59,29 +68,16 @@ class _MainScreenState extends State<MainScreen> {
     super.dispose();
   }
 
-  // Cargar texto desde un txt
   Future<void> _loadText() async {
     try {
-      // 1. Cargamos todo el contenido del archivo de texto
       final String response = await rootBundle.loadString('assets/textos.txt');
-
-      // 2. Lo dividimos en una lista usando los saltos de línea
       List<String> frases = response.split('\n');
-
-      // 3. Limpiamos posibles líneas vacías (por si dejas un "Enter" al final del archivo)
       frases = frases.where((frase) => frase.trim().isNotEmpty).toList();
 
       if (frases.isNotEmpty) {
-        // 4. Elegimos una frase al azar
         final random = Random();
-        final fraseAleatoria = frases[random.nextInt(frases.length)];
-
         setState(() {
-          _textoALeer = fraseAleatoria.trim();
-        });
-      } else {
-        setState(() {
-          _textoALeer = "El archivo de textos está vacío.";
+          _textoALeer = frases[random.nextInt(frases.length)].trim();
         });
       }
     } catch (e) {
@@ -91,7 +87,6 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  // Lógica de grabación de audio
   Future<void> _toggleRecording() async {
     if (_isRecording) {
       final path = await _audioRecorder.stop();
@@ -106,19 +101,19 @@ class _MainScreenState extends State<MainScreen> {
         await _audioRecorder.start(const RecordConfig(encoder: AudioEncoder.wav), path: path);
         setState(() {
           _isRecording = true;
-          _audioPath = null;
+          _audioPath = null; // Reiniciamos el audio si graba de nuevo
         });
       }
     }
   }
 
-  // Seleccionar Fecha de Nacimiento
   Future<void> _selectDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now().subtract(const Duration(days: 365 * 50)),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
+      // El formato dd/mm/aaaa ya lo aplica por el Locale en MaterialApp
     );
     if (picked != null) {
       setState(() {
@@ -127,7 +122,6 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  // Calcular edad
   int _calcularEdad(DateTime birthDate) {
     DateTime today = DateTime.now();
     int age = today.year - birthDate.year;
@@ -137,7 +131,37 @@ class _MainScreenState extends State<MainScreen> {
     return age;
   }
 
-  // Enviar a la API
+  // --- AVISO MÉDICO ---
+  void _mostrarAvisoMedico() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: Colors.orange),
+            SizedBox(width: 10),
+            Text("Aviso Legal y Médico"),
+          ],
+        ),
+        content: const Text(
+          "Esta aplicación es una herramienta experimental de apoyo "
+              "basada en Inteligencia Artificial.\n\n"
+              "Bajo ninguna circunstancia el resultado obtenido suple el diagnóstico, "
+              "criterio o tratamiento de un médico o especialista colegiado.\n\n"
+              "Privacidad: Los datos de voz y edad introducidos son analizados "
+              "en tiempo real y NO son almacenados ni guardados en nuestros servidores.",
+          textAlign: TextAlign.justify,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Entendido"),
+          )
+        ],
+      ),
+    );
+  }
+
   Future<void> _enviarDatos() async {
     if (_audioPath == null || _fechaNacimiento == null || _sexo == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -148,7 +172,6 @@ class _MainScreenState extends State<MainScreen> {
 
     final edad = _calcularEdad(_fechaNacimiento!);
 
-    // Mostrar diálogo de carga
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -173,24 +196,29 @@ class _MainScreenState extends State<MainScreen> {
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
 
-      // Cerrar el diálogo de carga
-      if (mounted) Navigator.pop(context);
+      if (mounted) Navigator.pop(context); // Cierra el loading
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
+
         if (mounted) {
-          Navigator.push(
+          // Navegamos a la pantalla de resultados y ESPERAMOS a que vuelva
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ResultScreen(data: responseData),
             ),
           );
+
+          // Cuando el usuario le da a "Atrás", se ejecuta esto: limpiamos el audio.
+          setState(() {
+            _audioPath = null;
+          });
         }
       } else {
         throw Exception("Error del servidor: ${response.statusCode}");
       }
     } catch (e) {
-      // Cerrar el diálogo de carga en caso de error
       if (mounted) Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error de conexión: $e")),
@@ -201,79 +229,87 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Formulario de Análisis")),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Texto a leer
-            Container(
-              padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(10),
+      appBar: AppBar(
+        title: const Text("Formulario de Análisis"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            tooltip: "Aviso Médico",
+            onPressed: _mostrarAvisoMedico,
+          )
+        ],
+      ),
+      // Usamos Center para maximizar el centrado visual si la pantalla es grande
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center, // Centramos los elementos
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  _textoALeer,
+                  style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+                  textAlign: TextAlign.center,
+                ),
               ),
-              child: Text(
-                _textoALeer,
-                style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
-                textAlign: TextAlign.center,
+              const SizedBox(height: 20),
+
+              ElevatedButton.icon(
+                onPressed: _toggleRecording,
+                icon: Icon(_isRecording ? Icons.stop : Icons.mic),
+                label: Text(_isRecording ? "Detener Grabación" : "Grabar Texto"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: _isRecording ? Colors.red.shade100 : null,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-
-            // Botón de grabación
-            ElevatedButton.icon(
-              onPressed: _toggleRecording,
-              icon: Icon(_isRecording ? Icons.stop : Icons.mic),
-              label: Text(_isRecording ? "Detener Grabación" : "Grabar Texto"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _isRecording ? Colors.red.shade100 : null,
-                padding: const EdgeInsets.symmetric(vertical: 15),
-              ),
-            ),
-            if (_audioPath != null) ...[
-              const SizedBox(height: 8),
-              const Text("Audio grabado correctamente", textAlign: TextAlign.center, style: TextStyle(color: Colors.green)),
-            ],
-
-            const Divider(height: 40),
-
-            // Selector de fecha
-            ListTile(
-              title: const Text("Fecha de Nacimiento"),
-              subtitle: Text(_fechaNacimiento == null
-                  ? "No seleccionada"
-                  : DateFormat('dd/MM/yyyy').format(_fechaNacimiento!)),
-              trailing: const Icon(Icons.calendar_month),
-              onTap: _selectDate,
-              tileColor: Colors.grey[100],
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-            const SizedBox(height: 15),
-
-            // Selector de Sexo
-            DropdownButtonFormField<int>(
-              decoration: InputDecoration(
-                labelText: "Sexo Biológico",
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-              value: _sexo,
-              items: const [
-                DropdownMenuItem(value: 0, child: Text("Femenino")),
-                DropdownMenuItem(value: 1, child: Text("Masculino")),
+              if (_audioPath != null) ...[
+                const SizedBox(height: 8),
+                const Text("✅ Audio grabado correctamente", textAlign: TextAlign.center, style: TextStyle(color: Colors.green)),
               ],
-              onChanged: (val) => setState(() => _sexo = val),
-            ),
-            const SizedBox(height: 40),
 
-            // Botón de Enviar
-            FilledButton(
-              onPressed: _enviarDatos,
-              style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 15)),
-              child: const Text("Analizar y Diagnosticar", style: TextStyle(fontSize: 18)),
-            )
-          ],
+              const Divider(height: 40),
+
+              ListTile(
+                title: const Text("Fecha de Nacimiento"),
+                subtitle: Text(_fechaNacimiento == null
+                    ? "No seleccionada"
+                    : DateFormat('dd/MM/yyyy').format(_fechaNacimiento!)),
+                trailing: const Icon(Icons.calendar_month),
+                onTap: _selectDate,
+                tileColor: Colors.grey[100],
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              const SizedBox(height: 15),
+
+              DropdownButtonFormField<int>(
+                decoration: InputDecoration(
+                  labelText: "Sexo Biológico",
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                value: _sexo,
+                items: const [
+                  DropdownMenuItem(value: 0, child: Text("Femenino")),
+                  DropdownMenuItem(value: 1, child: Text("Masculino")),
+                ],
+                onChanged: (val) => setState(() => _sexo = val),
+              ),
+              const SizedBox(height: 40),
+
+              FilledButton(
+                onPressed: _enviarDatos,
+                style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 15)),
+                child: const Text("Analizar y Diagnosticar", style: TextStyle(fontSize: 18)),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -287,22 +323,39 @@ class ResultScreen extends StatelessWidget {
 
   const ResultScreen({super.key, required this.data});
 
+  String _traducirVariableSHAP(String rawFeature) {
+    const Map<String, String> diccionario = {
+      'Age': 'Edad del paciente',
+      'Sex': 'Sexo biológico',
+      'ShimmerDb': 'Inestabilidad del volumen (Shimmer dB)',
+      'ATRI': 'Índice de Temblor Acústico (ATRI)',
+      'Hnr': 'Calidad de voz: Armónico-Ruido (HNR)',
+      'CHNR': 'Calidad de voz Cepstral (CHNR)',
+      'rPPQ': 'Inestabilidad del tono (rPPQ)',
+    };
+    return diccionario[rawFeature] ?? rawFeature;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final diagnostico = data['diagnostico'] ?? "Desconocido";
-    final probParkinson = data['probabilidad_parkinson_pct'] ?? 0.0;
+    final String diagnostico = data['diagnostico'] ?? "Desconocido";
+    final double probEnfermo = data['probabilidad_parkinson_pct'] ?? 0.0;
 
-    // Extraer datos SHAP
+    // --- LÓGICA DE PROBABILIDAD ---
+    // Determinamos si es sano o enfermo basándonos en la palabra clave del diagnóstico
+    final bool esSano = diagnostico.toLowerCase().contains("sano") || diagnostico.toLowerCase().contains("negativo");
+
+    // Si es sano, mostramos la probabilidad de estar sano (100 - prob_enfermo)
+    final double probabilidadMostrar = esSano ? (100.0 - probEnfermo) : probEnfermo;
+
     final shapData = data['shap_explicabilidad'] ?? {};
     final impactoVariables = shapData['impacto_variables'] as Map<String, dynamic>? ?? {};
 
-    // Encontrar el valor absoluto máximo para escalar la barra de -100 a 100 visualmente
     double maxAbsValue = 0.0;
     impactoVariables.forEach((key, value) {
       double absVal = (value is num ? value.toDouble() : 0.0).abs();
       if (absVal > maxAbsValue) maxAbsValue = absVal;
     });
-    // Evitar división por cero
     if (maxAbsValue == 0) maxAbsValue = 1.0;
 
     return Scaffold(
@@ -311,42 +364,44 @@ class ResultScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            // Diagnóstico en Grande
             Text(
-              diagnostico.toString().toUpperCase(),
+              diagnostico.toUpperCase(),
               style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: diagnostico.toString().toLowerCase().contains('positivo') ? Colors.red : Colors.green
+                  color: esSano ? Colors.green : Colors.red
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
             Text(
-              "Probabilidad: $probParkinson%",
+              "Confianza del diagnóstico: ${probabilidadMostrar.toStringAsFixed(2)}%",
               style: const TextStyle(fontSize: 18, color: Colors.grey),
             ),
             const Divider(height: 40, thickness: 2),
 
             const Text(
-              "Explicabilidad del Modelo (SHAP)",
+              "Variables más influyentes",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 5),
-            const Text("Hacia la izquierda (verde) reduce el riesgo. Hacia la derecha (rojo) aumenta el riesgo.", style: TextStyle(fontSize: 12)),
+            const Text(
+                "Verde: Indicador de salud | Rojo: Indicador de alerta",
+                style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic)
+            ),
             const SizedBox(height: 20),
 
-            // Lista de barras SHAP
             Expanded(
               child: ListView.builder(
                 itemCount: impactoVariables.length,
                 itemBuilder: (context, index) {
-                  String feature = impactoVariables.keys.elementAt(index);
-                  double value = (impactoVariables[feature] is num)
-                      ? (impactoVariables[feature] as num).toDouble()
+                  String rawFeature = impactoVariables.keys.elementAt(index);
+                  double value = (impactoVariables[rawFeature] is num)
+                      ? (impactoVariables[rawFeature] as num).toDouble()
                       : 0.0;
 
-                  return _buildShapBar(feature, value, maxAbsValue);
+                  String nombreLegible = _traducirVariableSHAP(rawFeature);
+                  return _buildShapBar(nombreLegible, value, maxAbsValue);
                 },
               ),
             ),
@@ -356,10 +411,8 @@ class ResultScreen extends StatelessWidget {
     );
   }
 
-  // Widget personalizado para la barra de progreso bidireccional
   Widget _buildShapBar(String feature, double value, double maxAbsValue) {
     bool isPositive = value >= 0;
-    // Normalizar el valor entre 0 y 1 respecto al máximo de esta ejecución
     double flexPct = (value.abs() / maxAbsValue).clamp(0.0, 1.0);
 
     return Padding(
@@ -367,11 +420,10 @@ class ResultScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("$feature (${value.toStringAsFixed(3)})", style: const TextStyle(fontWeight: FontWeight.w500)),
+          Text(feature, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
           const SizedBox(height: 4),
           Row(
             children: [
-              // Lado Negativo (Izquierda) - Contribuye a clase 0 (Sano)
               Expanded(
                 child: Align(
                   alignment: Alignment.centerRight,
@@ -381,7 +433,7 @@ class ResultScreen extends StatelessWidget {
                     child: Container(
                       height: 12,
                       decoration: const BoxDecoration(
-                          color: Colors.green, // Verde porque resta probabilidad
+                          color: Colors.green,
                           borderRadius: BorderRadius.horizontal(left: Radius.circular(4))
                       ),
                     ),
@@ -389,11 +441,7 @@ class ResultScreen extends StatelessWidget {
                       : null,
                 ),
               ),
-
-              // Línea central (Valor 0)
               Container(width: 2, height: 20, color: Colors.black87),
-
-              // Lado Positivo (Derecha) - Contribuye a clase 1 (Enfermo)
               Expanded(
                 child: Align(
                   alignment: Alignment.centerLeft,
@@ -403,7 +451,7 @@ class ResultScreen extends StatelessWidget {
                     child: Container(
                       height: 12,
                       decoration: const BoxDecoration(
-                          color: Colors.red, // Rojo porque suma probabilidad
+                          color: Colors.red,
                           borderRadius: BorderRadius.horizontal(right: Radius.circular(4))
                       ),
                     ),
