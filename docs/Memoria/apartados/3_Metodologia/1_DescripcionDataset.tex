@@ -1,0 +1,61 @@
+\section{Descripción de los Datasets y Modalidades Acústicas}
+
+    Para el desarrollo y entrenamiento de los modelos propuestos en este proyecto, se han empleado dos corpus de voz clínicos independientes. A continuación, se detalla la composición demográfica y las especificaciones técnicas de cada conjunto de datos.
+
+    \subsection{Dataset 1: NeuroVoz}
+        El primer conjunto de datos empleado es NeuroVoz, un corpus especializado de habla hispana. Este dataset está compuesto por las grabaciones de 107 participantes españoles, distribuidos de forma balanceada en dos grupos: 53 pacientes diagnosticados con la Enfermedad de Parkinson (EP) y 54 Sujetos de Control sanos (HC)\footnote{El corpus original NeuroVoz reporta 55 sujetos de control; un participante fue excluido durante el preprocesamiento al no superar el umbral mínimo de calidad de señal.} \cite{mendes2024}.
+
+        Es clínicamente relevante destacar que, en el momento de la grabación, todos los pacientes con EP se encontraban bajo los efectos de su tratamiento farmacológico. Esta condición asegura la homogeneidad de la muestra, garantizando que los biomarcadores extraídos sean robustos frente a la variabilidad que introduce la fluctuación del medicamento \cite{mendes2024}.
+
+        Respecto a la distribución demográfica de la muestra, el grupo de pacientes con Enfermedad de Parkinson presenta una edad media de $71.1 \pm 10.7$ años y está compuesto por 33 hombres y 20 mujeres. Por su parte, el grupo de sujetos de control sanos cuenta con una edad media de $64 \pm 10.4$ años, distribuyéndose en 28 hombres y 26 mujeres. Esta caracterización poblacional resulta fundamental para garantizar que el modelo discrimine patrones patológicos y no sesgos acústicos inherentes al género o al envejecimiento natural de los locutores.
+
+        Desde el punto de vista técnico, las señales acústicas fueron adquiridas utilizando un micrófono de diadema AKG\textsuperscript{\tiny\textregistered} C420, digitalizadas a través de una interfaz de audio SoundBlaster\textsuperscript{\tiny\textregistered} Live y almacenadas en formato de forma de onda sin compresión (.wav) \cite{mendes2024}. La configuración del entorno de captura permitió obtener una relación señal-ruido (SNR) media de 24,3 dB. Asimismo, el análisis empírico directo de las cabeceras de los archivos de audio confirman que las muestras operan a una frecuencia de muestreo de 44.100 Hz con una resolución de codificación PCM de 16 bits.
+
+        El protocolo de grabación de NeuroVoz incluyó diversas tareas fonatorias diseñadas para aislar distintos subsistemas neuromotores \cite{mendes2024}:
+
+        \begin{itemize}
+            \item \textbf{Fonación sostenida de vocales:} Se requirió a los participantes la pronunciación sostenida de las cinco vocales del español (/a/, /e/, /i/, /o/, /u/) a un volumen y tono conversacional, repitiendo el proceso en tres iteraciones. Su objetivo principal es la evaluación aislada de la capacidad fonatoria y la estabilidad de las cuerdas vocales.
+            
+            \item \textbf{Oraciones de repetición (\textit{Listen and Repeat}, LR):} Los sujetos escucharon 16 frases predefinidas y familiares (como refranes populares) para su posterior repetición. La elección metodológica de la repetición frente a la lectura directa responde a la necesidad de minimizar la carga cognitiva y evitar sesgos derivados de problemas de agudeza visual, comunes en la demografía estudiada. Estas oraciones fueron diseñadas acústicamente con propósitos específicos:
+            \begin{itemize}
+                \item Ocho oraciones inducen aperturas y cierres frecuentes del velo del paladar, evaluando la competencia del cierre velofaríngeo.
+                \item Dos oraciones están orientadas al análisis aislado de la prosodia.
+                \item Tres oraciones requieren enfatizar palabras concretas, permitiendo evaluar la entonación y la modulación emocional.
+            \end{itemize}
+            
+            \item \textbf{Pruebas Diadococinéticas (DDK):} Consistentes en la repetición veloz de la secuencia silábica inarticulada /pa-ta-ka/ lo más rápido posible durante un mínimo de 5 segundos. Esta prueba clínica estándar se utiliza específicamente para aislar y evaluar la competencia y velocidad del sistema articulatorio.
+            
+            \item \textbf{Habla espontánea (Monólogos libres):} Se solicitó a los participantes realizar un monólogo describiendo una ilustración estandarizada sobre actividades de la vida diaria. Este enfoque permite enriquecer el corpus con habla espontánea, capturando patrones lingüísticos, pausas y variaciones rítmicas en un contexto mucho más natural y cotidiano.
+        \end{itemize}
+
+        El conjunto total de audios suma un total de 3 horas, 46 minutos y 41 segundos de habla continua.
+    
+
+    \subsection{Dataset 2: PC-GITA}
+            El segundo corpus acústico empleado es PC-GITA (\textit{Parkinson's Disease - Grupo de Investigación en Telecomunicaciones Aplicadas}), un conjunto de datos de referencia compuesto por locutores nativos de español en su variante dialectal colombiana. Este dataset está conformado por las grabaciones de 100 participantes, distribuidos de forma balanceada en dos grupos: 50 pacientes diagnosticados con la Enfermedad de Parkinson (EP) y 50 sujetos de control sanos (HC) \cite{orozco2014}.
+
+            Es clínicamente relevante destacar que, en el momento de la captura, todos los pacientes con EP se encontraban bajo los efectos de su tratamiento farmacológico dopaminérgico, realizándose las sesiones de grabación en un periodo no superior a 3 horas tras la toma matutina. Esta ventana temporal, en consonancia con la metodología de NeuroVoz \cite{mendes2024}, asegura la homogeneidad de la muestra clínica, garantizando que los biomarcadores extraídos sean robustos frente a la variabilidad introducida por las fluctuaciones del ciclo de la medicación \cite{orozco2014}.
+
+            Respecto a su demografía, el grupo de pacientes con Enfermedad de Parkinson presenta una edad media de 61 $\pm$ 9.4 años y está compuesto por 25 hombres y 25 mujeres. Por su parte, el grupo de control posee una edad media de 61 $\pm$ 9.5 años, distribuyéndose en 25 hombres y 25 mujeres.
+
+            Desde el punto de vista técnico, las bioseñales fueron adquiridas utilizando un micrófono dinámico omnidireccional de calidad profesional (Shure\textsuperscript{\tiny\textregistered} SM63L), digitalizadas a través de una interfaz de audio M-Audio\textsuperscript{\tiny\textregistered} Fast Track C400 y almacenadas en formato de forma de onda sin compresión (.wav) \cite{orozco2014}. Las capturas de voz se llevaron a cabo en condiciones de ruido estrictamente controlado dentro de una cabina insonorizada construida específicamente en la Clínica Noel (Medellín, Colombia). Asimismo, el análisis de los archivos confirma que operan a una frecuencia de muestreo de 44.100 Hz con una resolución de codificación PCM de 16 bits \cite{orozco2014}.
+
+            El protocolo de grabación de PC-GITA incluyó diversas tareas vocales diseñadas para evaluar exhaustivamente la dinámica articulatoria, fonatoria y prosódica \cite{orozco2014}:
+
+            \begin{itemize}
+                \item \textbf{Fonación sostenida de vocales:} Se requirió la pronunciación sostenida de las cinco vocales del español (/a/, /e/, /i/, /o/, /u/) a volumen y tono conversacional durante tres iteraciones, añadiendo una ejecución final con modulación tonal (transición continua de frecuencias graves a agudas). Su objetivo es la evaluación aislada de la capacidad fonatoria y la flexibilidad laríngea.
+                
+                \item \textbf{Repetición (\textit{Listen and Repeat}, LR):} Los sujetos escucharon y repitieron un conjunto de 10 frases de distinta complejidad fonética y sintáctica, así como 45 palabras aisladas, minimizando la carga cognitiva frente a la lectura.
+                
+                \item \textbf{Pruebas Diadococinéticas (DDK):} Consistentes en la repetición veloz de secuencias silábicas inarticuladas (/pa-ta-ka/, /pa-ka-ta/, /pe-ta-ka/) y sílabas aisladas (/pa/, /ta/, /ka/). Esta batería evalúa la agilidad motora, la precisión y la velocidad de respuesta del sistema articulatorio.
+                
+                \item \textbf{Frases con énfasis:} Lectura dirigida de 4 oraciones donde se instruyó al paciente para acentuar prosódicamente palabras específicas, evaluando la capacidad de modulación intencional y el control de la microprosodia.
+                
+                \item \textbf{Lectura continua:} Lectura de un texto estructurado en forma de diálogo clínico (médico-paciente). Este texto fue diseñado para ser fonéticamente balanceado, abarcando el espectro completo de fonemas del español de Colombia.
+                
+                \item \textbf{Habla espontánea (Monólogos libres):} Se solicitó a los participantes relatar detalladamente su rutina diaria (desde el momento del despertar hasta la conclusión de su jornada). Este enfoque captura la prosodia natural, el ritmo, las pausas y los patrones discursivos sin las restricciones de un texto predefinido.
+            \end{itemize}
+
+            El volumen total de este corpus asciende a 4 horas, 30 minutos y 32 segundos de habla continua.     
+
+    

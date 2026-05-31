@@ -1,0 +1,25 @@
+\section{Deep Learning basado en imágenes: Arquitectura ResNet18}\label{sec:resnet}
+
+Con el objetivo de contrastar empíricamente el rendimiento de los modelos de Machine Learning tradicional (Sección~\ref{sec:ml_tradicional}) frente a enfoques de representación profunda, se exploró el uso de visión por computador. Específicamente, se implementó la arquitectura convolucional ResNet18 \cite{he2016}. Su inclusión en este estudio permite evaluar si la extracción automatizada de dependencias espaciotemporales logra superar la precisión de las características acústicas manuales, o si, por el contrario, la escasez de datos penaliza su alta complejidad arquitectónica.
+
+\subsection{Procesamiento de entrada y aumento de datos (\textit{Data Augmentation})}
+Los Espectrogramas Mel, extraídos en segmentos de 0,4 segundos con un solapamiento de 0,2 segundos, fueron redimensionados matricialmente a una resolución de 224x224 píxeles mediante interpolación (\textit{Anti-Aliasing}), estandarizando así la entrada a los requerimientos topológicos de la red. 
+
+Para incrementar la robustez del modelo y mitigar el sobreajuste, durante la fase de entrenamiento se aplicó dinámicamente la técnica de \textit{SpecAugment}. Este método de aumento de datos opera directamente sobre el espectrograma aplicando máscaras aleatorias tanto en el dominio temporal como en el frecuencial, forzando a la red a no depender de características acústicas aisladas.
+
+\subsection{Adaptación de la arquitectura y Transfer Learning}
+El modelo ResNet18 original está diseñado para procesar imágenes RGB. Para adaptar la arquitectura a la naturaleza monocromática de los espectrogramas, se modificó la primera capa convolucional (\textit{conv1}), configurándola para aceptar un único canal de entrada pero preservando los pesos preentrenados del conjunto ImageNet en los bloques siguientes. La capa final (\textit{Fully Connected}) fue sustituida por un Perceptrón de dos salidas, alineado con el problema de clasificación dicotómica.
+
+\subsection{Estrategia de Entrenamiento, Optimización e Inferencia}
+La optimización de los pesos de la red se ejecutó bajo las siguientes configuraciones hiperparamétricas y funciones de coste, definidas:
+
+\begin{itemize}
+    \item \textbf{Función de pérdida:} Se utilizó Entropía Cruzada (\textit{Cross-Entropy Loss}) incorporando una penalización de suavizado de etiquetas (\textit{Label Smoothing} = 0.1). Esta técnica previene que el modelo alcance estados de sobreconfianza (\textit{overconfidence}) en sus predicciones.
+    \item \textbf{Optimizador:} Se empleó AdamW con una tasa de aprendizaje base de $10^{-4}$ y un decaimiento de pesos (\textit{weight decay}) de $10^{-4}$.
+    \item \textbf{Planificador (\textit{Scheduler}):} Para garantizar una convergencia fina, se integró el algoritmo \textit{ReduceLROnPlateau}, configurado para reducir la tasa de aprendizaje a la mitad (factor 0.5) si la función de pérdida de validación no mejoraba tras 3 épocas.
+    \item \textbf{Tamaño de lote (\textit{Batch Size}):} 32 muestras por iteración.
+\end{itemize}
+
+Para salvaguardar la capacidad de generalización, se aplicó una métrica de parada temprana (\textit{Early Stopping}), deteniendo el entrenamiento y restaurando los mejores pesos si el error de validación no experimentaba decrementos durante 7 épocas consecutivas. 
+
+Finalmente, durante la inferencia, al estar los audios fragmentados en múltiples espectrogramas, la predicción a nivel de paciente se obtuvo aplicando una función Softmax sobre los \textit{logits} de salida de cada trama espacial (frame) y calculando la media aritmética de dichas probabilidades, binarizando el diagnóstico mediante el umbral óptimo de Youden \cite{youden1950}.

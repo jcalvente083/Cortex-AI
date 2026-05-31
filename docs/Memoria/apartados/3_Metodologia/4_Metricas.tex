@@ -1,0 +1,28 @@
+\section{Métricas de evaluación del rendimiento}
+\label{sec:metricas}
+
+La evaluación de modelos predictivos en el ámbito clínico y biomédico requiere un análisis exhaustivo que trascienda la simple tasa de aciertos (\textit{Accuracy}). Dado el impacto crítico de los falsos negativos (pacientes con Parkinson no detectados) y los falsos positivos (sujetos sanos diagnosticados erróneamente), el rendimiento de los algoritmos se evaluó a través de la matriz de confusión, extrayendo las métricas estadísticas estándar para tareas de clasificación binaria \cite{sokolova2009}. 
+
+En la formulación matemática, $TP$ representa los Verdaderos Positivos, $TN$ los Verdaderos Negativos, $FP$ los Falsos Positivos y $FN$ los Falsos Negativos.
+
+\begin{itemize}
+    \item \textbf{Exactitud (\textit{Accuracy}):} Mide la proporción global de predicciones correctas sobre el total de la muestra. Aunque ofrece una visión general, puede resultar engañosa en conjuntos de datos desbalanceados.
+    $$Accuracy = \frac{TP + TN}{TP + TN + FP + FN}$$
+    
+    \item \textbf{Sensibilidad o \textit{Recall} (\textit{True Positive Rate}):} Es la métrica clínica más crítica en esta investigación. Cuantifica la capacidad del modelo para identificar correctamente a los pacientes que realmente padecen la enfermedad de Parkinson, minimizando los casos que pasan desapercibidos.
+    $$Sensibilidad = \frac{TP}{TP + FN}$$
+    
+    \item \textbf{Especificidad (\textit{True Negative Rate}):} Evalúa la proporción de sujetos de control sanos que son correctamente identificados como tales. Una alta especificidad asegura que no se diagnostica erróneamente la patología a personas sanas.
+    $$Especificidad = \frac{TN}{TN + FP}$$
+
+    \item \textbf{Exactitud Balanceada (\textit{Balanced Accuracy}):} Definida como el promedio de la tasa de aciertos en cada clase individual. Evita que un modelo parezca bueno cuando solo acierta en la clase más abundante.
+    $$Balanced Accuracy = \frac{Sensibilidad + Especificidad}{2}$$
+    
+    \item \textbf{Precisión (\textit{Positive Predictive Value}):} Indica la proporción de pacientes diagnosticados con Parkinson por el modelo que realmente padecen la enfermedad.
+    $$Precision = \frac{TP}{TP + FP}$$
+    
+    \item \textbf{F1-Score:} Representa la media armónica entre la Precisión y la Sensibilidad. Es una métrica de un solo valor (\textit{single-number evaluation metric}) robusta frente al desbalanceo de clases, ya que penaliza los modelos que sacrifican una métrica en favor de la otra.
+    $$F1 = 2 \cdot \frac{Precision \cdot Sensibilidad}{Precision + Sensibilidad}$$
+\end{itemize}
+
+De forma complementaria, el poder discriminatorio probabilístico de los modelos se evaluó mediante la \textbf{Curva ROC} (\textit{Receiver Operating Characteristic}) \cite{fawcett2006}, que grafica la Sensibilidad frente a la tasa de falsos positivos ($1 - Especificidad$) en diversos umbrales de decisión. Para cuantificar esta curva, se calculó el \textbf{Área Bajo la Curva (AUC-ROC)}, donde un valor de 1.0 indica un modelo perfecto y un valor de 0.5 equivale a una predicción aleatoria.

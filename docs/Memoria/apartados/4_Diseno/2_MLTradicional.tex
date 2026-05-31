@@ -1,0 +1,53 @@
+\section{Machine Learning tradicional: KNN y XGBoost}\label{sec:ml_tradicional}
+
+Para establecer un punto de referencia (\textit{baseline}) y evaluar el poder predictivo del conjunto de las cinco características acústicas extraídas manualmente (rPPQ, ShimmerDb, HNR, CPPS y ATRI), se implementaron dos algoritmos clásicos de aprendizaje automático de distinta naturaleza matemática: K-Nearest Neighbors (KNN) y Extreme Gradient Boosting (XGBoost). Ambos algoritmos fueron precedidos por una etapa de estandarización (\textit{StandardScaler}) \cite{pedregosa2012} para garantizar que la magnitud de las variables métricas no sesgara el cálculo de distancias o la ganancia de los nodos.
+
+\subsection{K-Nearest Neighbors (KNN)}
+El algoritmo KNN es un método de clasificación no paramétrico fundamentado en la proximidad espacial de los vectores de características \cite{cover1967}. Su capacidad de generalización depende críticamente de la métrica de distancia empleada y del tamaño de la vecindad ($K$). Para determinar la configuración óptima sin incurrir en sobreajuste, se definió un espacio de búsqueda exhaustivo (\textit{GridSearchCV}) \cite{pedregosa2012} detallado en la Tabla~\ref{tab:grid_knn}.
+
+\begin{table}[H]
+    
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{0.8\textwidth}{>{\raggedright\arraybackslash}X >{\centering\arraybackslash}X}
+        \toprule
+        \textbf{Hiperparámetro} & \textbf{Valores explorados} \\
+        \midrule
+        Número de vecinos ($K$) & 3, 5, 7, 9, 11, 15, 21 \\
+        Esquema de pesos (\textit{weights}) & Uniforme, Distancia \\
+        Métrica de distancia (\textit{metric}) & Euclidiana, Manhattan, Minkowski \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Espacio de búsqueda de hiperparámetros para el modelo KNN.}
+    \label{tab:grid_knn}
+\end{table}
+
+% #TODO: AÑADIR LOS VALORES OBTENIDOS DE K, PESOS Y LA DISTANCIA USADA. 
+Tras la ejecución de la validación cruzada estructurada (\textit{Stratified Group 5-Fold}), la combinación que maximizó la métrica \textit{Balanced Accuracy} fue un modelo con $K=$ [AÑADIR K], utilizando un esquema de pesos basado en [AÑADIR PESO] y la distancia [AÑADIR DISTANCIA].
+
+\subsection{Extreme Gradient Boosting (XGBoost)}
+XGBoost es un algoritmo de ensamble robusto basado en el entrenamiento secuencial de árboles de decisión \cite{chen2016}. Dada su inherente complejidad algorítmica y su propensión al sobreajuste si los árboles crecen sin restricciones, se ejecutó una búsqueda aleatoria (\textit{RandomizedSearchCV}) iterando sobre 100 combinaciones posibles. Se puso especial énfasis en el control de la profundidad del árbol y en los términos de penalización de la función de coste (regularización L1 y L2). El subespacio de exploración se resume en la Tabla~\ref{tab:grid_xgb}.
+
+\begin{table}[H]
+    \centering
+    \caption{Espacio de búsqueda principal de hiperparámetros para el modelo XGBoost.}
+    \label{tab:grid_xgb}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{6cm} X}
+        \toprule
+        \textbf{Hiperparámetro} & \textbf{Valores explorados} \\
+        \midrule
+        Número de árboles (\textit{n\_estimators}) & 100, 200, 300, 400 \\
+        Profundidad máxima (\textit{max\_depth}) & 2, 3, 4 \\
+        Tasa de aprendizaje (\textit{learning\_rate}) & 0.01, 0.05, 0.1 \\
+        Regularización L1 (\textit{reg\_alpha}) & 0, 0.1, 0.5, 1.0 \\
+        Regularización L2 (\textit{reg\_lambda}) & 1.0, 3.0, 5.0, 10.0 \\
+        Submuestreo (\textit{subsample}) & 0.6, 0.7, 0.8, 1.0 \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+Es clínicamente imperativo destacar que el hiperparámetro \textit{scale\_pos\_weight} no se buscó de forma aleatoria, sino que se calculó dinámicamente en función de la proporción de clases presentes en los datos de entrenamiento, forzando al modelo a penalizar en mayor medida los errores sobre la clase minoritaria. 
+
+% #TODO: AÑADIR LOS VALORES DE PROFUNDIDAD MÁXIMA, No ESTIMADORES Y TASA DE APRENDIZAJE FINALES
+Finalmente, tras completar las iteraciones de búsqueda, la topología óptima del ensamble se conformó mediante [AÑADIR N\_ESTIMATORS] estimadores, limitando su profundidad máxima a [AÑADIR MAX\_DEPTH] niveles y ajustando los pesos con una tasa de aprendizaje de [AÑADIR LR].

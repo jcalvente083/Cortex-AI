@@ -1,0 +1,64 @@
+% ==================== 1.5. MODELOS DE INTELIGENCIA ARTIFICIAL APLICADOS AL ANÁLISIS DE VOZ. ====================
+        \section{Modelos de Inteligencia Artificial aplicados al análisis de voz}
+            La aplicación de modelos de Inteligencia Artificial (IA) al análisis de la voz permite desarrollar sistemas capaces de detectar patrones acústicos y prosódicos asociados a enfermedades neurodegenerativas. Estos modelos se entrenan con características vocales previamente extraídas o directamente con representaciones espectrales de la señal, con el fin de clasificar a los individuos según su estado neurológico.
+            En las investigaciones consultadas sobre el tema, los enfoques pueden agruparse en cuatro categorías principales: métodos clásicos de aprendizaje automático, modelos de aprendizaje profundo, modelos basados en embeddings o foundation models y enfoques de inteligencia artificial explicable (XAI).
+
+            % ==================== 1.5.1. MÉTODOS CLÁSICOS DE APRENDIZAJE AUTOMÁTICO ====================
+            \subsection{Métodos clásicos de aprendizaje automático}
+                Los modelos clásicos de Machine Learning (ML) se han utilizado extensamente en la detección de Parkinson, Alzheimer y ELA debido a su facilidad de interpretabilidad, bajo coste computacional y eficacia en datasets con pocos datos. Entre los algoritmos más empleados destacan: Support Vector Machine (SVM), Random Forest (RF), K-Nearest Neighbors (KNN), Logistic Regression y AdaBoost, que operan sobre conjuntos de features previamente seleccionadas.
+
+                En el ámbito del Parkinson, Tougui et al. (2020) emplea un sistema de clasificación usando SVM, KNN, RF y Extreme Gradient Boosting sobre 138 características en los dominios temporal, frecuencial y cepstral, logrando una precisión del 95,8\%, una sensibilidad del 95,3\% y una especificidad del 96,2\%.
+                De forma parecida, Di Cesare et al. (2024) compararon los resultados de SVM, KNN y redes neuronales con características derivadas de MFCCs y Gammatone Cepstral Coefficients, logrando precisiones de hasta el 92,3\%, con sensibilidad y especificidad equilibradas (75–93\%).
+                Otros estudios, como el de Kar y Campbell (2020), usando un modelo híbrido de regresión logística y red neuronal para detectar Parkinson en fases tempranas, a partir de medidas de Pitch Period Entropy y Spread1, obteniendo valores de sensibilidad del 95–96\% y precisión del 85–96\%.
+
+                Para la enfermedad de Alzheimer, García-Gutiérrez et al. (2024) compararon varios algoritmos clásicos (RF, SVM, KNN y Extreme Gradient Boosting) en un conjunto de más de 1500 muestras de voz espontánea, alcanzando puntuaciones F1 entre 84\% y 92\%. 
+                En la ELA, Tena et al. aplicaron SVM y Random Forest a componentes cuasi-periódicos de vocales sostenidas, obteniendo precisiones entre 78,7\% y 91,0\% y áreas bajo la curva (AUC) de 0,85–0,99, lo que demuestra la gran capacidad de estos métodos para detectar la afectación bulbar en su etapa inicial.
+
+                En conjunto, los métodos clásicos siguen siendo una opción consolidada, sobretodo en los casos donde el tamaño de los datos es limitado y se dispone de features bien definidas. No obstante, su rendimiento suele verse afectado en datasets grandes o con características altamente correlacionadas.  En estos los modelos profundos ofrecen ventajas significativas.
+
+            % ==================== 1.5.2. MODELOS DE APRENDIZAJE PROFUNDO ====================
+            \subsection{Modelos de aprendizaje profundo}
+                El Deep Learning ha transformado todo el campo del aprendizaje automático, incluido el del análisis de voz, permitiendo que los modelos aprendan representaciones directamente, a partir de la señal acústica, reduciendo la tediosa tarea de la extracción manual de características. Entre los enfoques más frecuentes destacan: las redes neuronales convolucionales (CNN), las redes recurrentes (RNN, LSTM, GRU) y los modelos híbridos CNN-RNN.
+
+                En el ámbito del Parkinson, Worasawate et al. (2021) emplearon CNNs (LeNet-5, ResNet-50 y VGG-16), cuyas entradas eran los espectrogramas de vocales sostenidas /aa/ recogidos mediante smartphones. Con un dataset de 4051 muestras, alcanzaron precisiones del 97,7\% al 99,3\%, demostrando la capacidad de las CNN para capturar patrones espacio-temporales en señales ruidosas.
+                Por su parte, Álvarez Marquina et al. (2022) aplicaron CNNs sobre medidas de formantes obtenidas de vocales sostenidas (/a/), obteniendo una precisión del 96\% y especificidad del 99\% en un conjunto de 1280 grabaciones, lo que confirma el potencial de las redes convolucionales para identificar alteraciones articulatorias.
+                Luna-Ortiz et al. (2023), a través de una combinación de análisis dinámico no lineal supervisado y CNNs en dos bases de datos distintas, alcanzando resultados excepcionalmente altos (99,5–99,7\% de precisión).
+                Finalmente, Muntaha et al. (2024) implementaron un modelo atencional híbrido LSTM-BiGRU con un componente de interpretabilidad (Explainable Boosting Machine), obteniendo precisiones entre 96,3\% y 97,5\%.
+
+                Los modelos profundos también han mostrado resultados notables en Alzheimer y ELA. Moro-Velázquez et al. (2020, 2021) introdujeron técnicas de x-vectors e i-vectors, integradas en redes neuronales probabilísticas, alcanzando precisiones de 85–94\% y áreas bajo la curva (AUC) de 0,91–0,99 en Parkinson. Aunque su objetivo principal fue la diferenciación de fases clínicas de la enfermedad.
+
+                En resumen, los modelos de aprendizaje profundo superan considerablemente a los métodos clásicos en datasets medianos o grandes, gracias a su capacidad para aprender representaciones jerárquicas complejas. Sin embargo, su rendimiento puede verse afectado en muestras pequeñas y requieren un control mayúsculo para evitar sobreajustes teniendo que realizar técnicas de regularización o validación cruzada.
+
+            % ==================== 1.5.3. MODELOS BASADOS EN EMBEDDINGS Y FOUNDATION MODELS ====================
+            \subsection{Modelos basados en embeddings y foundation models}
+                En los últimos años, se ha observado una tendiencia hacia el uso de modelos auto-supervisados y de representación profunda del habla, capaces de aprender directamente de grandes volúmenes de datos no etiquetados. Estos modelos, denominados foundation models, generan embeddings que condensan información fonética, prosódica y semántica de manera más rica que las features tradicionales.
+
+                En el estudio de Alzheimer, Agbavor y Liang (2022) usaron el modelo data2vec junto con clasificadores clásicos (SVM, RF, regresión logística), logrando áreas bajo la curva (AUC) de 0,835–0,846 y evidenciando que los embeddings auto-supervisados pueden sustituir las características manuales desempeñando un excelente papel.
+                En el caso del Parkinson, Dao et al. (2025) exploraron wav2vec 2.0, Whisper y Seamless M4T para extraer representaciones de voz que fueron las entradas de distintos clasificadores. Dicho estudio reporta haber alcanzado un AUC del 91,4\%, confirmando la viabilidad de los foundation models para detectar etapas tempranas de la enfermedad.
+               
+                El uso de embeddings preentrenados ha demostrado conseguir mejorar la robustez frente a ruido, variabilidad entre hablantes y diferencias de idioma. Además, estos modelos reducen la necesidad de extracción de características y facilitan la transferencia entre tareas, abriendo nuevas posibilidades para la creación de sistemas universales de detección de enfermedades mediante voz.
+            
+            % ==================== 1.5.4. INTELIGENCIA ARTIFICIAL EXPLICABLE (XAI) Y MODELOS INTERPRETABLES ====================
+            \subsection{Inteligencia Artificial explicable (XAI) y modelos interpretables}
+                Un aspecto cada vez más relevante en la aplicación de IA a entornos clínicos es la interpretabilidad de los modelos. Los profesionales de la salud requieren entender qué características vocales influyen en la decisión del modelo para poder validar y confiar en los resultados.
+                Shen et al. (2024) abordaron este desafío aplicando técnicas de Explainable AI a la detección temprana del Parkinson. Su enfoque combinó redes neuronales híbridas (CNN-RNN) con mecanismos de atención y visualización de relevancia, consiguiendo una precisión del 91,1\%, sensibilidad del 92,5\% y especificidad del 89,8\%, al tiempo que identificaban las features más influyentes (MFCCs, jitter, shimmer).
+                De manera complementaria, Muntaha et al. (2024) integraron un componente de Explainable Boosting Machine (EBM) en su arquitectura LSTM-BiGRU, mostrando cómo la atención se concentraba en regiones de la señal asociadas a la disfonía y la falta de control respiratorio.
+
+                Estos trabajos marcan una tendencia hacia modelos no solo precisos, sino también transparentes y clínicamente interpretables, condición necesaria para la futura integración de la IA en la práctica médica.
+
+            % ==================== 1.5.5.  SINTESIS COMPARATIVA ====================
+            \subsection{Sintesis Comparativa}
+                El análisis conjunto de los doce estudios revisados permite identificar patrones claros:
+
+                \begin{itemize}
+                    \item Los \textbf{métodos clásicos} (SVM, RF, KNN) siguen siendo competitivos en datasets pequeños o con features bien seleccionadas, con precisiones medias del 80–95\%.
+                    
+                    \item Las \textbf{Redes profundas} (CNN, LSTM) ofrecen los mejores resultados globales (hasta 99\%) en escenarios con grandes volúmenes de datos y tareas controladas.
+                    
+                    \item Los \textbf{Modelos de embeddings y foundation models} representan la evolución natural del campo, destacando por su capacidad de generalización y menor dependencia del preprocesamiento manual.
+                    
+                    \item Los \textbf{enfoques explicables} emergen como una necesidad clave para la validación clínica y la adopción real en entornos sanitarios.
+
+                \end{itemize}
+
+                En conclusión, la IA aplicada al análisis de la voz alcanza niveles de rendimiento excepcionales en la detección de enfermedades neurodegenerativas, especialmente en Parkinson y Alzheimer. No obstante, siguen existiendo desafíos relacionados con la validación cruzada, la variabilidad de los datos y la interpretabilidad de los resultados. La integración de modelos fundacionales con técnicas de XAI se perfila como la línea más prometedora para futuras investigaciones y desarrollos clínicamente aplicables.

@@ -1,0 +1,40 @@
+name: cortex_ai
+description: "Cortex-AI — Detección de Parkinson mediante análisis de voz"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # State management
+  provider: ^6.1.2
+
+  # Audio recording & playback
+  record: ^6.2.1
+  audioplayers: ^6.1.0
+
+  # HTTP
+  dio: ^5.7.0
+
+  # Permissions
+  permission_handler: ^11.3.1
+
+  # Storage
+  shared_preferences: ^2.3.3
+  path_provider: ^2.1.4
+
+  # Charts
+  fl_chart: ^0.69.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

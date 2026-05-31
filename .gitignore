@@ -1,0 +1,30 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# VS Code settings
+.vscode/
+
+# Audios
+data
+
+# Pesos modelos
+models
+
+# Claude
+.claude
+
+logs
+
+SESION*
+LanzarEmbeddings.MD

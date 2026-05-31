@@ -1,0 +1,55 @@
+\section{Foundation Models: Extracción de características con Wav2Vec 2.0 y Clasificación}\label{sec:foundational_models}
+
+Como se describió en la Sección~\ref{sec:wav2vec_extraction}, el proceso de extracción de \textit{embeddings} proyecta cada grabación de audio en un vector continuo de 1024 dimensiones mediante \textit{Global Average Pooling} sobre los estados ocultos de la última capa del modelo \textit{Transformer}. Este enfoque permite explorar si las representaciones latentes, aprendidas de forma auto-supervisada sobre grandes corpus de habla, son inherentemente discriminativas para la detección de la Enfermedad de Parkinson.
+
+Una vez obtenido el espacio dimensional de los \textit{embeddings}, el flujo de clasificación incorpora las mismas dos familias de algoritmos empleadas sobre las características acústicas manuales (KNN y XGBoost). Esta simetría metodológica permite realizar una comparación directa entre la capacidad representacional de ambas modalidades de entrada.
+
+\subsection{Reducción de dimensionalidad mediante Análisis de Componentes Principales}
+
+Un vector de 1024 dimensiones presenta una elevada carga computacional y es susceptible a la \textit{maldición de la dimensionalidad} para algoritmos basados en vecindad como KNN. La densidad del espacio crece exponencialmente con la dimensión, degradando la discriminabilidad de las métricas de distancia. Para mitigar este efecto, se aplicó un \textit{pipeline} de preprocesamiento compuesto por dos etapas sucesivas.
+
+En primer lugar, se estandarizó cada dimensión del espacio de \textit{embeddings} aplicando \textit{StandardScaler}, transformando linealmente cada componente para que presente media nula y varianza unitaria:
+\begin{equation}
+    z_i = \frac{x_i - \mu_i}{\sigma_i}
+\end{equation}
+
+Esta normalización es un requisito matemático imprescindible antes de ejecutar el Análisis de Componentes Principales (PCA), evitando que las dimensiones con mayor amplitud dominen la dirección de máxima varianza \cite{pedregosa2012}. Seguidamente, se aplicó el PCA, proyectando el espacio estandarizado de 1024 dimensiones sobre los 50 componentes principales que maximizan la varianza explicada acumulada. La matriz de transformación se ajustó exclusivamente sobre los datos de entrenamiento y se aplicó de forma independiente al conjunto de validación y al \textit{holdout} externo, previniendo cualquier fuga de información (\textit{Data Leakage}).
+
+
+La compresión a 50 dimensiones reduce el espacio de búsqueda en un factor aproximado de 20, mejora la capacidad de generalización de los clasificadores y facilita la interpretación del espacio latente.
+
+\subsection{Clasificador K-Nearest Neighbors sobre embeddings}
+
+El algoritmo KNN fue adaptado para operar sobre el subespacio comprimido de 50 componentes PCA. La lógica de optimización de hiperparámetros replica íntegramente la descrita en la Sección~\ref{sec:ml_tradicional}: se ejecutó una búsqueda exhaustiva mediante \textit{GridSearchCV} bajo una estrategia de validación cruzada \textit{Stratified Group 5-Fold} (agrupación estricta por paciente y estratificación por clase), explorando el espacio de búsqueda definido en la Tabla~\ref{tab:grid_knn}.
+
+% #TODO: AÑADIR LOS PARAMETROS FINALES.
+Tras la optimización, la configuración óptima para este espacio latente resultó en un modelo con K = [AÑADIR K], pesos basados en [AÑADIR PESO] y distancia [AÑADIR DISTANCIA]. La agregación de probabilidades a nivel de paciente y la binarización mediante el estadístico de Youden \cite{youden1950} se aplicaron siguiendo el protocolo de la Sección~\ref{sec:configuracion_experimental}.
+
+\subsection{Clasificador XGBoost sobre embeddings}
+
+De forma análoga, el modelo XGBoost fue entrenado sobre los 50 componentes principales. Se ejecutó una búsqueda estocástica (\textit{RandomizedSearchCV}) iterando sobre 60 combinaciones del espacio de hiperparámetros. Dado que la representación latente de Wav2Vec 2.0 presenta propiedades estadísticas distintas a las de las características acústicas manuales, el espacio de exploración fue extendido para incluir el parámetro de submuestreo de características por árbol (\textit{colsample\_bytree}), tal como se detalla en la Tabla~\ref{tab:grid_xgb_emb}.
+
+\begin{table}[H]
+    \centering
+    \caption{Espacio de búsqueda de hiperparámetros para XGBoost sobre embeddings Wav2Vec 2.0.}
+    \label{tab:grid_xgb_emb}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{0.8\textwidth}{>{\raggedright\arraybackslash}X >{\centering\arraybackslash}X}
+        \toprule
+        \textbf{Hiperparámetro} & \textbf{Valores explorados} \\
+        \midrule 
+        Número de árboles (\textit{n\_estimators}) & 100, 200, 300 \\
+        Profundidad máxima (\textit{max\_depth}) & 2, 3, 4 \\
+        Tasa de aprendizaje (\textit{learning\_rate}) & 0.01, 0.05, 0.1 \\
+        Penalización de nodo (\textit{gamma}) & 0, 0.1, 0.5 \\
+        Submuestreo de filas (\textit{subsample}) & 0.6, 0.8, 1.0 \\
+        Submuestreo de columnas (\textit{colsample\_bytree}) & 0.6, 0.8, 1.0 \\
+        Peso mínimo de hoja (\textit{min\_child\_weight}) & 1, 3, 5 \\
+        Regularización L1 (\textit{reg\_alpha}) & 0, 0.1, 1.0 \\
+        Regularización L2 (\textit{reg\_lambda}) & 1.0, 3.0, 10.0 \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+% #TODO: AÑADIR LOS PARAMETROS FINALES.
+Al igual que en la variante acústica, el parámetro \textit{scale\_pos\_weight} se calculó dinámicamente a partir de la proporción de clases del conjunto de entrenamiento. Tras la búsqueda, el ensamble óptimo se consolidó con [AÑADIR N\_ESTIMATORS] árboles, una profundidad máxima de [AÑADIR MAX\_DEPTH] y una tasa de aprendizaje de [AÑADIR LR]. La evaluación final se realizó sobre el \textit{holdout} externo a nivel de sujeto, unificando los criterios métricos descritos en la metodología.

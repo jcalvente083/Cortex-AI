@@ -1,0 +1,75 @@
+\section{Entorno tecnológico (Hardware, librerías de Python)}
+    \subsection{Hardware utilizado}
+        Los experimentos, el procesamiento de las bioseñales y el entrenamiento de los modelos fueron ejecutados en dos estaciones de trabajo independientes. Esta división permitió distribuir la carga computacional según los exigentes requisitos de memoria de las distintas arquitecturas empleadas:
+
+        \begin{itemize}
+            \item \textbf{Estación de Trabajo 1 (Preprocesamiento y ML Clásico):} Empleada principalmente para la limpieza de las señales acústicas, la extracción de características manuales y el entrenamiento de los algoritmos de Machine Learning tradicional (KNN y XGBoost).
+            \item \textbf{Estación de Trabajo 2 (Deep Learning y Foundation Models):} Dedicada de forma exclusiva a la generación de espectrogramas Mel, la extracción de representaciones latentes mediante Wav2Vec 2.0 y el entrenamiento de la arquitectura ResNet18, aprovechando una mayor capacidad de memoria VRAM para el cálculo matricial y tensorial.
+        \end{itemize}
+
+        \begin{table}[H]
+            \centering
+            \label{tab:hardware}
+            \renewcommand{\arraystretch}{1.3}
+            \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.5cm} X X}
+                \toprule
+                \textbf{Componente} & \textbf{Estación de Trabajo 1} & \textbf{Estación de Trabajo 2} \\
+                \midrule
+                \textbf{Procesador (CPU)} & Intel\textsuperscript{\textregistered} Core\textsuperscript{\texttrademark} i7-12650H \newline (10 núcleos, 16 hilos) 2.30 GHz & Intel\textsuperscript{\textregistered} Core\textsuperscript{\texttrademark} i7-13700H \newline (14 núcleos, 20 hilos) 2.30 GHz \\
+                \textbf{Memoria RAM} & 16 GB SODIMM a 3200 MT/s & 16 GB SODIMM a 5200 MT/s \\
+                \textbf{Tarjeta Gráfica} & NVIDIA\textsuperscript{\textregistered} GeForce\textsuperscript{\textregistered} RTX\textsuperscript{\texttrademark} 3050 \newline Laptop GPU (4 GB VRAM) & NVIDIA\textsuperscript{\textregistered} GeForce\textsuperscript{\textregistered} RTX\textsuperscript{\texttrademark} 4060 \newline Laptop GPU (8 GB VRAM)  \\
+                \textbf{Almacenamiento} & 512 GB SSD (WD PC SN740) & 1 TB SSD (SAMSUNG MZVL21T0HCLR) \\
+                \textbf{Sistema Operativo} & Windows 11 Pro (64 bits) & Windows 11 Home (64 bits) \\
+                \bottomrule
+            \end{tabularx}
+            \caption{Especificaciones de hardware de los equipos utilizados para el procesamiento y entrenamiento de los modelos.}
+        \end{table}
+
+
+    \subsection{Librerías de Python utilizadas}
+
+        Para el desarrollo de este proyecto se ha establecido un entorno de trabajo basado en Python. La gestión de los paquetes y las dependencias se ha realizado utilizando \textbf{uv}, un gestor de proyectos moderno escrito en Rust que destaca por su extrema rapidez y su capacidad para garantizar la reproducibilidad de los experimentos.
+
+        Debido a la gran cantidad de librerías involucradas en el entrenamiento de los modelos y el despliegue del sistema, en la \autoref{tab:librerias_proyecto} se resumen las herramientas principales, agrupadas según su propósito dentro del flujo de trabajo.
+
+        
+        \begin{table}[htbp]
+            \centering
+            \begin{tabular}{@{}llp{8cm}@{}}
+                \toprule
+                \textbf{Librería / Herramienta} &  \textbf{Propósito en el proyecto} \\
+                \midrule
+                
+                \multicolumn{2}{c}{\textbf{Gestión de Entorno y Backend}} \\
+                \midrule
+                uv & Gestor de paquetes y dependencias ultrarrápido escrito en Rust. \\
+                FastAPI \& Uvicorn & Desarrollo y despliegue del servidor API REST. \\
+                \midrule
+                
+                \multicolumn{2}{c}{\textbf{Deep Learning y Machine Learning}} \\
+                \midrule
+                Ecosistema PyTorch & Framework principal (incluye TorchAudio y TorchVision). \\
+                Transformers \& TIMM & Implementación de modelos de lenguaje y visión avanzados. \\
+                XGBoost \& scikit-learn & Algoritmos de aprendizaje automático tradicional y métricas. \\
+                SHAP & Explicabilidad e interpretabilidad de los modelos de IA. \\
+                \midrule
+                
+                \multicolumn{2}{c}{\textbf{Procesamiento de Audio y Datos}} \\
+                \midrule
+                Librosa, Parselmouth \& NoiseReduce & Carga, limpieza y extracción de características acústicas. \\
+                Pandas, NumPy \& SciPy & Manipulación de datos tabulares y cálculo científico. \\
+                Matplotlib \& Seaborn & Visualización de datos y generación de gráficas. \\
+                \bottomrule
+            \end{tabular}
+            \caption{Principales librerías y herramientas de software utilizadas en el proyecto agrupadas por categoría.}
+            \label{tab:librerias_proyecto}
+        \end{table}
+
+        
+        Como se puede observar, el núcleo del proyecto se apoya fuertemente en el ecosistema de PyTorch para el aprendizaje profundo, complementado con FastAPI para la creación de la interfaz de comunicación. 
+
+        Para mantener la claridad del documento, el listado exhaustivo y completo de todas las dependencias del proyecto, junto con sus versiones exactas y subdependencias (reflejadas en el entorno virtual generado por \texttt{uv}), se encuentra detallado en el \textbf{\hyperref[app:anexo_a]{Apéndice~\ref{app:anexo_a}}}.
+
+
+
+        

@@ -1,0 +1,48 @@
+\section{Modelo End-to-End mediante Fine-Tuning de Wav2Vec 2.0}\label{sec:end2end}
+
+El enfoque descrito en la Sección~\ref{sec:foundational_models} emplea Wav2Vec 2.0 como un extractor de características estático: los pesos del modelo permanecen congelados y la señal de error nunca se retropropaga a través del \textit{backbone}. Aunque esta estrategia es eficiente y robusta frente al sobreajuste, implica que las representaciones latentes no se especializan algorítmicamente para la tarea de detección de disartria.
+
+Para explorar el límite superior de esta arquitectura, se diseñó un segundo paradigma de entrenamiento \textit{End-to-End}: el modelo se ajusta de forma diferenciada (\textit{Fine-Tuning}) sobre el corpus clínico, permitiendo que las últimas capas del \textit{Transformer} adapten sus representaciones a las sutilezas acústicas del habla patológica en español.
+
+\subsection{Arquitectura del modelo}
+
+El clasificador se construye sobre el mismo \textit{backbone} preentrenado empleado en la sección anterior (\texttt{jonatasgrosman/wav2vec2-large-xlsr-53-spanish}), compuesto por un codificador CNN de siete bloques convolucionales seguido de 24 capas \textit{Transformer} con una dimensionalidad oculta de 1024. Sobre este \textit{backbone} se acopla una cabeza de clasificación (\textit{Classification Head}) formada por una capa de \textit{Dropout} ($p = 0.1$) y una capa lineal de 1024 entradas y 2 salidas (Control~vs.~Parkinson).
+
+La salida del \textit{backbone} es una secuencia temporal de longitud variable (un estado oculto de 1024 dimensiones por cada 20 ms de audio). Para colapsar esta secuencia en un único vector de representación por muestra, se aplica \textit{Global Average Pooling} sobre el eje temporal, operación equivalente a la media aritmética de todos los estados ocultos de la última capa. Este vector agregado constituye la entrada directa a la cabeza de clasificación.
+
+\subsection{Estrategia de congelamiento (\textit{Freezing})}
+
+El ajuste fino de la totalidad de los 317 millones de parámetros del modelo sobre un corpus de 207 pacientes induciría un sobreajuste severo, además de resultar computacionalmente prohibitivo en términos de memoria VRAM. Para abordar este problema, se adoptó una estrategia de congelamiento por capas (\textit{layer-wise freezing}):
+
+\begin{itemize}
+    \item \textbf{Codificador CNN (\textit{Feature Encoder}):} Permanece completamente congelado. Sus filtros, aprendidos durante el preentrenamiento auto-supervisado, extraen representaciones acústicas de bajo nivel (frecuencia, energía) que son universales e independientes de la tarea clínica.
+    \item \textbf{Proyección de características (\textit{Feature Projection}):} Congelada. Actúa como un cuello de botella fijo entre el codificador CNN y el bloque \textit{Transformer}.
+    \item \textbf{Capas \textit{Transformer} $[0, 21)$:} Las primeras 21 de las 24 capas permanecen congeladas. Codifican el contexto fonético y prosódico de la señal, aprendido a partir del gran corpus multilingüe de preentrenamiento.
+    \item \textbf{Capas \textit{Transformer} $[21, 24)$ y Cabeza de Clasificación:} Las tres últimas capas del \textit{Transformer} y la cabeza lineal son los únicos parámetros entrenables, sumando un total aproximado de 20 millones de parámetros (el $6.3\%$ del modelo).
+\end{itemize}
+
+Esta configuración busca un equilibrio técnico entre la especialización del modelo y la prevención del \textit{catastrophic forgetting}: las capas superiores, más abstractas y sensibles a la tarea, se adaptan al dominio clínico, mientras que las representaciones fonéticas de bajo y medio nivel se preservan íntegras.
+
+\subsection{Preprocesamiento de la entrada}
+
+El modelo recibe directamente la forma de onda cruda en lugar de características acústicas preprocesadas. Cada audio es cargado a 16\,kHz y truncado o completado con ceros (\textit{zero-padding}) hasta una longitud máxima fija de 10 segundos (160.000 muestras). Esta restricción de longitud limita el pico de memoria en GPU durante el entrenamiento, dado que la complejidad cuadrática del mecanismo de atención escala con la longitud de la secuencia post-CNN ($T \approx 500$ \textit{frames} para 10 segundos de audio). La normalización de la amplitud de la señal se delega al procesador nativo de la arquitectura Wav2Vec 2.0 \cite{baevski2020wav2vec}.
+
+\subsection{Función de pérdida, optimizador y planificación del aprendizaje}
+
+La función de pérdida empleada es la Entropía Cruzada con suavizado de etiquetas (\textit{Label Smoothing} $= 0.1$). Este mecanismo penaliza la sobreconfianza del modelo, redistribuyendo una fracción de la masa de probabilidad desde la clase verdadera hacia el resto, lo cual actúa como un regularizador implícito especialmente beneficioso en escenarios de escasez de datos \cite{szegedy2016rethinking}.
+
+La optimización de los parámetros entrenables se realizó mediante el algoritmo AdamW \cite{loshchilov2017decoupled}, configurado con una tasa de aprendizaje de $\eta = 10^{-5}$ y un decaimiento de pesos (\textit{weight decay}) de $\lambda = 10^{-2}$. La tasa de aprendizaje inicial de $10^{-5}$ es deliberadamente conservadora: valores superiores provocan una degradación brusca de las representaciones preentrenadas en las capas descongeladas.
+
+Para garantizar la convergencia fina en etapas tardías del entrenamiento, se integró un planificador adaptativo \textit{ReduceLROnPlateau}, que reduce la tasa de aprendizaje a la mitad (factor $0.5$) cuando la pérdida de validación no mejora durante 3 épocas consecutivas, estableciendo un límite inferior de $\eta_{min} = 10^{-7}$.
+
+\subsection{Acumulación de gradientes y precisión mixta}
+
+Dado que los requisitos de memoria gráfica de Wav2Vec 2.0 limitan el tamaño de lote físico a 4 muestras, se implementó la técnica de acumulación de gradientes (\textit{Gradient Accumulation}) \cite{ott2019fairseq} con un factor de 4 pasos, obteniendo un tamaño de lote efectivo de 16 muestras. Esta técnica acumula los gradientes de múltiples iteraciones hacia adelante (\textit{forward passes}) antes de ejecutar la actualización de pesos, emulando el comportamiento de un lote mayor sin incrementar el consumo de memoria.
+
+Para acelerar el cómputo y reducir adicionalmente el uso de VRAM, se habilitó la precisión mixta automática (\textit{Automatic Mixed Precision}, AMP) mediante el contexto \texttt{torch.autocast} de PyTorch. Esto ejecuta las operaciones tensoriales en formato FP16 mientras preserva el estado del optimizador en FP32. Los gradientes se escalaron dinámicamente (\textit{GradScaler}) para evitar el desbordamiento numérico (\textit{underflow}) inherente a la representación de baja precisión, y se aplicó un recorte de gradiente (\textit{gradient clipping}) con una norma máxima de 1.0 para estabilizar el entrenamiento en la cabeza de clasificación recién inicializada.
+
+\subsection{Parada temprana e inferencia a nivel de paciente}
+
+El entrenamiento se limitó a un máximo de 30 épocas, integrando una estrategia de parada temprana (\textit{Early Stopping}) con una paciencia de 8 épocas: si la función de pérdida sobre el conjunto de validación interna no registra mejoría, el proceso se interrumpe y se restauran los pesos del mejor \textit{checkpoint}. El criterio de parada opera sobre la pérdida a nivel de grabación individual, mientras que la métrica de evaluación definitiva se calcula a nivel de paciente.
+
+Durante la inferencia, las predicciones de todas las grabaciones de un mismo paciente se agregan calculando la media aritmética de las probabilidades \textit{Softmax} de la clase patológica. El umbral óptimo de binarización se determina maximizando el estadístico $J$ de Youden sobre el conjunto de validación interna, siguiendo estrictamente el protocolo descrito en la Sección~\ref{sec:configuracion_experimental}.

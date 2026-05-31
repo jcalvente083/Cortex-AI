@@ -1,0 +1,53 @@
+ % ==================== 1.4. EXTRACCIÓN DE CARACTERÍSTICAS VOCALES. ====================
+        \section{Extracción de características vocales}
+            El análisis de la voz mediante técnicas de Inteligencia Artificial requiere, como paso previo fundamental, la extracción de características que representen de forma cuantitativa las propiedades acústicas, prosódicas y articulatorias del habla. Estas características constituyen la base sobre la que los modelos de aprendizaje podrán identificar patrones asociados a las distintas enfermedades. La calidad, diversidad y relevancia de las características seleccionadas tienen un impacto directo en el rendimiento de los modelos.
+            
+            Las características vocales se agrupan habitualmente en varias categorías, cada una de las cuales refleja un aspecto concreto del proceso de producción del habla.
+
+            % ==================== 1.4.1. CARACTERÍSTICAS ACÚSTICAS ====================
+            \subsection{Características acústicas}
+                Son las más utilizadas y se derivan directamente de la señal de audio. Entre ellas destacan los Coeficientes Cepstrales en Frecuencia Mel (MFCCs), que representan la envolvente espectral del sonido y modelan la percepción auditiva humana. Los MFCCs han demostrado ser altamente discriminativos en la detección de la enfermedad de Parkinson y de Alzheimer, ya que capturan alteraciones sutiles en la fonación y en la articulación.
+                Otros parámetros acústicos relevantes incluyen:
+                 
+                 \begin{itemize}
+                    \item \textbf{Jitter}(variación de frecuencia) y \textbf{Shimmer} (variación de amplitud) que indican inestabilidad vocal.
+                    \item \textbf{Relación Armónico-Ruido (HNR)} que mide la calidad de la voz y la presencia de turbulencias.
+                    \item \textbf{Formantes (F1–F3)} que reflejan la configuración articulatoria del tracto vocal y suelen alterarse en patologías motoras.
+                \end{itemize}
+                
+                Estos parámetros pueden obtenerse fácilmente mediante herramientas como Praat u openSMILE, y suelen normalizarse para reducir la variabilidad entre hablantes.
+
+            % ==================== 1.4.2. CARACTERÍSTICAS PROSÓDICAS. ====================
+            \subsection{Características prosódicas}
+                Las features prosódicas describen el patrón rítmico y entonación del habla, e incluyen medidas de frecuencia fundamental (F0), duración de sílabas y pausas y variabilidad de la intensidad. En enfermedades como el Alzheimer, donde se altera la planificación del discurso, o en Parkinson, donde la prosodia tiende a ser monótona, estos parámetros son especialmente informativos. La combinación de medidas temporales y entonativas permite distinguir entre cambios motores y cognitivos en el control del habla.
+
+            % ==================== 1.4.3. CARACTERÍSTICAS ARTICULATORIAS Y PARALINGÜÍSTICAS. ====================
+            \subsection{Características articulatorias y paralingüísticas}
+                Estas características describen aspectos relacionados con la precisión fonética, la fluidez y la coordinación motora del habla. Por ejemplo, la velocidad de articulación, la coherencia entre sílabas o la estabilidad respiratoria pueden diferenciar sujetos con ELA. Por otra parte, los descriptores paralingüísticos, capturan información emocional o de estilo de habla que también puede alterarse con la enfermedad.
+                Con el estándar ComParE (Computational Paralinguistics Challenge), implementado en openSMILE, se incluyen cientos de parámetros para aplicaciones biomédicas, convirtiendolo en una herramienta util en estudios de Parkinson y Alzheimer.
+
+            % ==================== 1.4.4. REPRESENTACIONES ESPECTRALES Y DE ALTO NIVEL. ====================
+            \subsection{Representaciones espectrales y de alto nivel}
+                El desarrollo del aprendizaje profundo ha impulsado el uso de representaciones espectrales como mel-spectrogramas o espectrogramas logarítmicos entre otros, que se utilizan como entrada para modelos de redes neuronales convolucionales (CNN). Estos mapas tiempo-frecuencia permiten que los modelos aprendan patrones característicos de cada patología, eliminando la necesidad de ingeniería manual de características.
+                Estudios recientes, como los de Worasawate et al. (2021) y Álvarez Marquina et al. (2022), han demostrado que el uso de espectrogramas combinados con CNN puede alcanzar precisiones superiores al 95\% en la clasificación de pacientes con Parkinson.
+
+            % ==================== 1.4.5. EMBEDDINGS Y REPRESENTACIONES PROFUNDAS. ====================
+            \subsection{Embeddings y representaciones profundas}
+                Más recientemente, se han introducido representaciones de alto nivel denominadas embeddings, generadas por modelos preentrenados en grandes corpus de voz. Entre las más utilizadas destacan los i-vectors y x-vectors, empleados por Moro-Velázquez et al. (2020, 2021), que resumen la información del hablante en un espacio de baja dimensión y permiten capturar rasgos relacionados con la articulación, la prosodia y la fonación. 
+                Así mismo, los denominados foundation models, como wav2vec2.0, data2vec o Whisper, han revolucionado el campo al aprender representaciones auto-supervisadas del habla sin necesidad de etiquetas. Estos modelos, explorados en trabajos como Agbavor \& Liang (2022) y Dao et al. (2025), proporcionan características de alto nivel que mejoran la generalización y reducen el tiempo de preprocesado.
+
+            % ==================== 1.4.6. HERRAMIENTAS DE PROCESOS DE PREPROCESAMIENTO. ====================
+            \subsection{Herramientas y procesos de preprocesamiento}
+                El pipeline habitual para la extracción de características incluye:
+            
+                \begin{enumerate}
+                    \item \textbf{Adquisición de la señal} mediante grabaciones de voz controladas o espontáneas.
+                    \item \textbf{Preprocesamiento} eliminando el ruido, normalizando el volumen, segmentando temporalmente y detectando silencios.
+                    \item \textbf{Extracción de características} con la ayuda de librerías como librosa, openSMILE o Praat.
+                    \item \textbf{Selección de carcaterísticas} mediante análisis estadístico o técnicas automáticas (ANOVA, PCA, Recursive Feature Elimination).    
+                \end{enumerate}
+                
+                La elección de las características depende del tipo de modelo empleado y de la enfermedad objetivo. Por ejemplo, los modelos clásicos como Support Vector Machines (SVM) suelen requerir un conjunto limitado de features bien definidas, mientras que las redes profundas pueden operar directamente sobre espectrogramas o embeddings sin una selección previa.
+                
+                En resumen, la etapa de extracción de características constituye un componente esencial en los sistemas de análisis de voz para la detección de enfermedades neurodegenerativas. La integración de features acústicas, prosódicas y profundas proporciona una representación completa del habla, capaz de reflejar tanto alteraciones motoras como cognitivas. En las secciones siguientes se abordarán los distintos enfoques de modelado con Inteligencia Artificial, analizando cómo cada tipo de algoritmo utiliza estas características para clasificar o predecir la presencia de enfermedad.
+        

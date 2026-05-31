@@ -1,0 +1,19 @@
+\babel@toc {spanish}{}\relax 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {2.1}{\ignorespaces Resumen de los estudios seleccionados sobre detección de enfermedades neurodegenerativas mediante análisis de voz.}}{24}{table.caption.4}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {3.1}{\ignorespaces Descripción y categorización clínica de las características acústicas extraídas.}}{36}{table.3.1}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces Estadística descriptiva (Media $\pm $ Desviación Típica) de las características acústicas seleccionadas para sujetos de Control (HC) y pacientes con Parkinson (EP).}}{38}{table.caption.6}%
+\contentsline {table}{\numberline {3.3}{\ignorespaces Especificaciones de hardware de los equipos utilizados para el procesamiento y entrenamiento de los modelos.}}{43}{table.caption.8}%
+\contentsline {table}{\numberline {3.4}{\ignorespaces Principales librerías y herramientas de software utilizadas en el proyecto agrupadas por categoría.}}{43}{table.caption.9}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {4.1}{\ignorespaces Espacio de búsqueda de hiperparámetros para el modelo KNN.}}{49}{table.caption.10}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces Espacio de búsqueda principal de hiperparámetros para el modelo XGBoost.}}{50}{table.caption.11}%
+\contentsline {table}{\numberline {4.3}{\ignorespaces Espacio de búsqueda de hiperparámetros para XGBoost sobre embeddings Wav2Vec 2.0.}}{54}{table.caption.12}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }

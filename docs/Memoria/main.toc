@@ -1,0 +1,107 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {chapter}{Resumen}{1}{chapter*.1}%
+\contentsline {chapter}{Abstract}{2}{chapter*.2}%
+\contentsline {chapter}{Agradecimientos}{3}{chapter*.3}%
+\contentsline {chapter}{\numberline {1}Introducción a la propuesta}{9}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Contexto y motivación: Relevancia de la detección precoz en enfermedades neurodegenerativas}{9}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Objetivos del proyecto}{10}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Objetivo general}{10}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}Objetivos específicos}{10}{subsection.1.2.2}%
+\contentsline {section}{\numberline {1.3}Estructura de la memoria}{11}{section.1.3}%
+\contentsline {chapter}{\numberline {2}Estado del arte}{13}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Introducción}{13}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Enfermedades neurodegenerativas. Visión general}{14}{section.2.2}%
+\contentsline {section}{\numberline {2.3}La voz como biomarcador. Fundamentos}{15}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Extracción de características vocales}{17}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Características acústicas}{17}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Características prosódicas}{18}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}Características articulatorias y paralingüísticas}{18}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.4}Representaciones espectrales y de alto nivel}{18}{subsection.2.4.4}%
+\contentsline {subsection}{\numberline {2.4.5}Embeddings y representaciones profundas}{19}{subsection.2.4.5}%
+\contentsline {subsection}{\numberline {2.4.6}Herramientas y procesos de preprocesamiento}{19}{subsection.2.4.6}%
+\contentsline {section}{\numberline {2.5}Modelos de Inteligencia Artificial aplicados al análisis de voz}{20}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Métodos clásicos de aprendizaje automático}{20}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}Modelos de aprendizaje profundo}{21}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.3}Modelos basados en embeddings y foundation models}{22}{subsection.2.5.3}%
+\contentsline {subsection}{\numberline {2.5.4}Inteligencia Artificial explicable (XAI) y modelos interpretables}{22}{subsection.2.5.4}%
+\contentsline {subsection}{\numberline {2.5.5}Sintesis Comparativa}{23}{subsection.2.5.5}%
+\contentsline {section}{\numberline {2.6}Comparativa de resultados, rendimiento y limitaciones}{23}{section.2.6}%
+\contentsline {subsection}{\numberline {2.6.1}Resultados por enfermedades}{25}{subsection.2.6.1}%
+\contentsline {subsection}{\numberline {2.6.2}Limitaciones de los estudios}{26}{subsection.2.6.2}%
+\contentsline {subsection}{\numberline {2.6.3}Conclusiones}{27}{subsection.2.6.3}%
+\contentsline {section}{\numberline {2.7}Tendencias y líneas futuras}{27}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Avances en modelos de representación y foundation models}{28}{subsection.2.7.1}%
+\contentsline {subsubsection}{\numberline {2.7.1.1}Integración multimodal de datos}{28}{subsubsection.2.7.1.1}%
+\contentsline {subsubsection}{\numberline {2.7.1.2}Explicabilidad y validación clínica}{28}{subsubsection.2.7.1.2}%
+\contentsline {subsubsection}{\numberline {2.7.1.3}Creación de bases de datos abiertas y estandarizadas}{28}{subsubsection.2.7.1.3}%
+\contentsline {subsubsection}{\numberline {2.7.1.4}Aplicaciones en entornos reales y monitorización continua}{29}{subsubsection.2.7.1.4}%
+\contentsline {subsubsection}{\numberline {2.7.1.5}Síntesis prospectiva}{29}{subsubsection.2.7.1.5}%
+\contentsline {section}{\numberline {2.8}Conclusiones}{30}{section.2.8}%
+\contentsline {chapter}{\numberline {3}Metodología y Entorno de Trabajo}{31}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Descripción de los Datasets y Modalidades Acústicas}{31}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Dataset 1: NeuroVoz}{31}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Dataset 2: PC-GITA}{33}{subsection.3.1.2}%
+\contentsline {section}{\numberline {3.2}Preprocesamiento de datos}{34}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Preprocesamiento de las señales acústicas}{34}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Extracción de características manuales para Machine Learning Tradicional}{35}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Selección de características y reducción de dimensionalidad}{37}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.4}Análisis Estadístico de los Biomarcadores Acústicos}{38}{subsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.2.5}Generación de representaciones acústicas para Deep Learning}{40}{subsection.3.2.5}%
+\contentsline {subsection}{\numberline {3.2.6}Extracción de embeddings acústicos mediante Wav2Vec 2.0}{41}{subsection.3.2.6}%
+\contentsline {section}{\numberline {3.3}Entorno tecnológico (Hardware, librerías de Python)}{42}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Hardware utilizado}{42}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Librerías de Python utilizadas}{43}{subsection.3.3.2}%
+\contentsline {section}{\numberline {3.4}Métricas de evaluación del rendimiento}{44}{section.3.4}%
+\contentsline {chapter}{\numberline {4}Diseño y Desarrollo de los Modelos}{46}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Configuración experimental y estrategias de entrenamiento}{46}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Partición de los datos y prevención del \textit {Data Leakage}}{46}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Validación Cruzada (\textit {Cross-Validation})}{47}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}Optimización de umbral de decisión (Estadístico de Youden)}{47}{subsection.4.1.3}%
+\contentsline {subsection}{\numberline {4.1.4}Enfoque Multi-Tarea y Modelado Específico por Actividad}{48}{subsection.4.1.4}%
+\contentsline {section}{\numberline {4.2}Machine Learning tradicional: KNN y XGBoost}{48}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}K-Nearest Neighbors (KNN)}{49}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Extreme Gradient Boosting (XGBoost)}{49}{subsection.4.2.2}%
+\contentsline {section}{\numberline {4.3}Deep Learning basado en imágenes: Arquitectura ResNet18}{50}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Procesamiento de entrada y aumento de datos (\textit {Data Augmentation})}{50}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Adaptación de la arquitectura y Transfer Learning}{51}{subsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.3.3}Estrategia de Entrenamiento, Optimización e Inferencia}{51}{subsection.4.3.3}%
+\contentsline {section}{\numberline {4.4}Foundation Models: Extracción de características con Wav2Vec 2.0 y Clasificación}{52}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Reducción de dimensionalidad mediante Análisis de Componentes Principales}{52}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Clasificador K-Nearest Neighbors sobre embeddings}{53}{subsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.4.3}Clasificador XGBoost sobre embeddings}{53}{subsection.4.4.3}%
+\contentsline {section}{\numberline {4.5}Modelo End-to-End mediante Fine-Tuning de Wav2Vec 2.0}{54}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Arquitectura del modelo}{55}{subsection.4.5.1}%
+\contentsline {subsection}{\numberline {4.5.2}Estrategia de congelamiento (\textit {Freezing})}{55}{subsection.4.5.2}%
+\contentsline {subsection}{\numberline {4.5.3}Preprocesamiento de la entrada}{56}{subsection.4.5.3}%
+\contentsline {subsection}{\numberline {4.5.4}Función de pérdida, optimizador y planificación del aprendizaje}{56}{subsection.4.5.4}%
+\contentsline {subsection}{\numberline {4.5.5}Acumulación de gradientes y precisión mixta}{56}{subsection.4.5.5}%
+\contentsline {subsection}{\numberline {4.5.6}Parada temprana e inferencia a nivel de paciente}{57}{subsection.4.5.6}%
+\contentsline {chapter}{\numberline {5}Prueba de Concepto: Aplicación Interactiva de Diagnóstico}{58}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Arquitectura del sistema}{58}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Frontend móvil/web con Flutter}{58}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}API REST Backend con FastAPI}{58}{subsection.5.1.2}%
+\contentsline {section}{\numberline {5.2}Flujo de datos y diagrama de secuencia de la predicción}{58}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Despliegue del modelo XGBoost y generación de explicabilidad (SHAP)}{58}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Interfaz de usuario: Análisis de resultados}{59}{section.5.4}%
+\contentsline {chapter}{\numberline {6}Resultados y Discusión}{60}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Comparativa de rendimiento según la modalidad del dato (Vocales vs. Frases vs. Fusión)}{60}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Comparativa arquitectónica (Modelos Clásicos vs. ResNet18 vs. Wav2Vec 2.0)}{60}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Análisis de interpretabilidad clínica mediante valores SHAP}{60}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Discusión global: Precisión frente a coste computacional e interpretabilidad}{60}{section.6.4}%
+\contentsline {chapter}{\numberline {7}Conclusiones y Trabajo Futuro}{61}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Conclusiones y grado de consecución de los objetivos}{61}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Limitaciones del estudio}{61}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Líneas de trabajo futuro}{61}{section.7.3}%
+\contentsline {chapter}{Referencias}{62}{chapter*.13}%
+\contentsline {chapter}{\numberline {A}Dependencias del entorno virtual}{66}{chapter.A}%
+\contentsline {chapter}{\numberline {B}Repositorio y Binarios de la Aplicación}{68}{chapter.B}%
+\contentsline {chapter}{\numberline {C}Análisis Exploratorio de los Datasets}{70}{chapter.C}%
+\contentsline {section}{\numberline {C.1}Caracterización Demográfica de los Corpus}{70}{section.C.1}%
+\contentsline {subsection}{\numberline {C.1.1}Distribución de pacientes, sexo y edad}{70}{subsection.C.1.1}%
+\contentsline {subsection}{\numberline {C.1.2}Distribución de grabaciones por actividad de habla}{71}{subsection.C.1.2}%
+\contentsline {section}{\numberline {C.2}Análisis Estadístico de los Biomarcadores Acústicos}{72}{section.C.2}%
+\contentsline {subsection}{\numberline {C.2.1}Diagramas de violín por corpus y actividad}{72}{subsection.C.2.1}%
+\contentsline {paragraph}{Jitter (perturbación de frecuencia).}{72}{paragraph*.22}%
+\contentsline {paragraph}{Shimmer (perturbación de amplitud).}{72}{paragraph*.23}%
+\contentsline {paragraph}{Armonicidad (HNR, NNE, CPPS).}{72}{paragraph*.24}%
+\contentsline {paragraph}{Temblor (ATRI).}{79}{paragraph*.25}%
