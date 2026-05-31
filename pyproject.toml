@@ -31,6 +31,7 @@ dependencies = [
     "transformers>=5.7.0",
     "httpx>=0.28.1",
     "modal>=1.4.3",
+    "pypdf2>=3.0.1",
 ]
 
 [[tool.uv.index]]
