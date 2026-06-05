@@ -1,4 +1,4 @@
-# Python-generated files
+# Python
 __pycache__/
 *.py[oc]
 build/
@@ -6,31 +6,35 @@ dist/
 wheels/
 *.egg-info
 
-# Virtual environments
-.venv
+# Entorno virtual
+.venv/
 
-# Jupyter Notebook checkpoints
+# Jupyter
 .ipynb_checkpoints/
+notebooks/
 
-# VS Code settings
+# IDE
 .vscode/
 
-# Audios
-data
-docs
+# Datos y audios (demasiado grandes)
+data/
 
+# Pesos de modelos
+models/
 
-# Pesos modelos
-models
+# Figuras y reportes generados por los scripts
+reports/
+
+# Memoria LaTeX
+docs/
 
 # Claude
-.claude
+.claude/
 
-logs
-
+# Logs y sesiones
+logs/
 SESION*
 LanzarEmbeddings.MD
 
-
-# LATEX
-
+# Scripts de lanzamiento de Windows
+*.bat
