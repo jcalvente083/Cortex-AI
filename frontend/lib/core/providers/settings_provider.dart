@@ -5,7 +5,7 @@ class SettingsProvider extends ChangeNotifier {
   static const _keyUrl   = 'backend_url';
   static const _keyModel = 'default_model';
 
-  String _backendUrl   = 'http://raspberrypi.local:8000';
+  String _backendUrl   = 'http://raspberrypi.local:9000';
   String _defaultModel = 'knn';
 
   String get backendUrl   => _backendUrl;

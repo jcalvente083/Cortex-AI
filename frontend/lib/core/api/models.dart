@@ -80,6 +80,8 @@ class BatchPredictionResult {
   final double umbralPromedio;
   final String modelo;
   final Map<String, double> detallePorActividad;
+  final Explicabilidad? explicabilidad;
+  final Map<String, String?>? gradCamPorActividad;
 
   const BatchPredictionResult({
     required this.probabilidadPdFinal,
@@ -88,6 +90,8 @@ class BatchPredictionResult {
     required this.umbralPromedio,
     required this.modelo,
     required this.detallePorActividad,
+    this.explicabilidad,
+    this.gradCamPorActividad,
   });
 
   factory BatchPredictionResult.fromJson(Map<String, dynamic> j) => BatchPredictionResult(
@@ -99,5 +103,13 @@ class BatchPredictionResult {
         detallePorActividad: (j['detalle_por_actividad'] as Map<String, dynamic>).map(
           (k, v) => MapEntry(k, (v as num).toDouble()),
         ),
+        explicabilidad: j['explicabilidad'] == null
+            ? null
+            : Explicabilidad.fromJson(j['explicabilidad'] as Map<String, dynamic>),
+        gradCamPorActividad: j['grad_cam_por_actividad'] == null
+            ? null
+            : (j['grad_cam_por_actividad'] as Map<String, dynamic>).map(
+                (k, v) => MapEntry(k, v as String?),
+              ),
       );
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../core/api/models.dart';
 import '../../core/theme.dart';
 import 'risk_gauge.dart';
+import 'explainability_chart.dart';
+import 'grad_cam_widget.dart';
 class ResultScreen extends StatelessWidget {
   final BatchPredictionResult result;
 
@@ -91,6 +93,8 @@ class ResultScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
+            _ExplainabilitySection(result: result),
+            const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -111,6 +115,49 @@ class ResultScreen extends StatelessWidget {
               icon: const Icon(Icons.home),
               label: const Text('Volver al inicio'),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ExplainabilitySection extends StatelessWidget {
+  final BatchPredictionResult result;
+  const _ExplainabilitySection({required this.result});
+
+  @override
+  Widget build(BuildContext context) {
+    final hasGradCam = result.gradCamPorActividad != null &&
+        result.gradCamPorActividad!.values.any((v) => v != null);
+    final hasFeatures = result.explicabilidad != null &&
+        result.explicabilidad!.disponible &&
+        result.explicabilidad!.features.isNotEmpty;
+
+    if (!hasGradCam && !hasFeatures) return const SizedBox.shrink();
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.insights, size: 18, color: AppTheme.primary),
+                const SizedBox(width: 6),
+                Text('¿Por qué este resultado?',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontWeight: FontWeight.bold)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (hasGradCam)
+              GradCamWidget(gradCamPorActividad: result.gradCamPorActividad!)
+            else if (hasFeatures)
+              ExplainabilityChart(explicabilidad: result.explicabilidad!),
           ],
         ),
       ),

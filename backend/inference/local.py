@@ -240,6 +240,77 @@ def _audio_to_frames(y: np.ndarray) -> torch.Tensor:
     return torch.stack(tensors)   # (n_frames, 1, 224, 224)
 
 
+def compute_grad_cam_from_bytes(audio_bytes: bytes, model: nn.Module) -> str | None:
+    """
+    Grad-CAM sobre ResNet18: heatmap de activación superpuesto al espectrograma.
+    Devuelve PNG base64 o None si falla.
+    """
+    import io, base64
+    from PIL import Image as PILImage
+
+    try:
+        y      = preprocess_waveform(audio_bytes)
+        frames = _audio_to_frames(y)   # (n_frames, 1, 224, 224)
+
+        grads_list: list = []
+        acts_list:  list = []
+
+        def _fwd(module, inp, out):
+            acts_list.append(out.detach().clone())
+
+        def _bwd(module, grad_in, grad_out):
+            grads_list.append(grad_out[0].detach().clone())
+
+        h_f = model.layer4[-1].register_forward_hook(_fwd)
+        h_b = model.layer4[-1].register_full_backward_hook(_bwd)
+
+        try:
+            logits = model(frames)
+            score  = F.softmax(logits, dim=1)[:, 1].mean()
+            model.zero_grad()
+            score.backward()
+
+            if not grads_list or not acts_list:
+                return None
+
+            grads   = grads_list[0]                                       # (n_frames, C, H, W)
+            acts    = acts_list[0]                                        # (n_frames, C, H, W)
+            weights = grads.mean(dim=(2, 3), keepdim=True)                # (n_frames, C, 1, 1)
+            cam     = F.relu((weights * acts).sum(dim=1).mean(0))         # (H, W) — avg over frames
+
+            cam_np  = cam.numpy()
+            cam_np  = (cam_np - cam_np.min()) / (cam_np.max() - cam_np.min() + 1e-8)
+
+            cam_img     = PILImage.fromarray((cam_np * 255).astype(np.uint8))
+            cam_resized = np.array(cam_img.resize((224, 224), PILImage.BILINEAR)) / 255.0
+
+            spec      = frames.mean(0)[0].detach().numpy()                # (224, 224)
+            spec_norm = (spec - spec.min()) / (spec.max() - spec.min() + 1e-8)
+
+            # Jet colormap (numpy)
+            t = cam_resized
+            r = np.clip(1.5 - np.abs(4 * t - 3), 0, 1)
+            g = np.clip(1.5 - np.abs(4 * t - 2), 0, 1)
+            b = np.clip(1.5 - np.abs(4 * t - 1), 0, 1)
+            cam_rgb  = np.stack([r, g, b], axis=-1)
+            spec_rgb = np.stack([spec_norm] * 3, axis=-1)
+
+            overlay = np.clip((0.4 * spec_rgb + 0.6 * cam_rgb) * 255, 0, 255).astype(np.uint8)
+            overlay = overlay[::-1, :, :].copy()   # flip: frecuencias bajas abajo
+
+            buf = io.BytesIO()
+            PILImage.fromarray(overlay).save(buf, format='PNG', optimize=True)
+            return base64.b64encode(buf.getvalue()).decode()
+
+        finally:
+            h_f.remove()
+            h_b.remove()
+
+    except Exception as e:
+        print(f"[grad_cam] {e}")
+        return None
+
+
 def predict_resnet18(
     audio_bytes: bytes,
     activity:    str,

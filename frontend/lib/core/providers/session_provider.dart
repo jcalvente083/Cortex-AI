@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import '../api/api_client.dart';
 import '../api/models.dart';
@@ -18,24 +19,52 @@ class SessionProvider extends ChangeNotifier {
   SessionStatus _status = SessionStatus.idle;
   BatchPredictionResult? _result;
   String? _errorMessage;
+  final int sceneIndex;
 
-  SessionStatus get status       => _status;
+  SessionStatus get status          => _status;
   BatchPredictionResult? get result => _result;
-  String? get errorMessage       => _errorMessage;
+  String? get errorMessage          => _errorMessage;
 
-  final slots = [
-    RecordingSlot(label: 'Vocal',      instruction: 'Sostén la vocal /a/ durante 5 segundos'),
-    RecordingSlot(label: 'Frase',      instruction: 'Lee en voz alta: "El cielo está despejado hoy"'),
-    RecordingSlot(label: 'Espontánea', instruction: 'Describe lo que hiciste esta mañana (30 seg)'),
+  late final List<RecordingSlot> slots;
+
+  static const _phrases = [
+    'El cielo está despejado hoy',
+    'Los pájaros cantan por las mañanas',
+    'María compró pan fresco en la panadería',
+    'El niño juega en el parque con su perro',
+    'La lluvia cae suavemente sobre el tejado',
+    'Hoy hace un día muy soleado y agradable',
+    'Me gusta caminar por el campo en primavera',
+    'El tren llegó puntual a la estación central',
+    'Ana prepara una taza de té todas las tardes',
+    'El libro estaba encima de la mesa del salón',
+    'Las flores del jardín huelen muy bien en abril',
+    'Pedro sale a correr todos los días por la mañana',
   ];
+
+  SessionProvider() : sceneIndex = Random().nextInt(4) {
+    final phrase = _phrases[Random().nextInt(_phrases.length)];
+    slots = [
+      RecordingSlot(
+        label:       'Vocal',
+        instruction: 'Sostén la vocal /a/ durante 5 segundos',
+      ),
+      RecordingSlot(
+        label:       'Frase',
+        instruction: 'Lee en voz alta: "$phrase"',
+      ),
+      RecordingSlot(
+        label:       'Espontánea',
+        instruction: 'Describe la escena que aparece arriba durante 30 segundos',
+      ),
+    ];
+  }
 
   bool get allRecorded => slots.every((s) => s.file != null);
 
   void setFile(int index, File file) {
     slots[index].file = file;
-    if (allRecorded) {
-      _status = SessionStatus.recorded;
-    }
+    if (allRecorded) _status = SessionStatus.recorded;
     notifyListeners();
   }
 

@@ -38,8 +38,8 @@ def extract_acoustic_features(audio_bytes: bytes, feature_names: list[str]) -> d
         if len(y) < int(SR * 0.5):
             return None
 
-        extractor = ExtraccionCaracteristicas(y, SR)
-        all_feats = extractor.extraer_todo()
+        extractor = ExtraccionCaracteristicas()
+        all_feats = extractor.extraer_desde_array(y, SR)
         if all_feats is None:
             return None
 

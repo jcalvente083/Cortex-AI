@@ -30,6 +30,7 @@ from backend.inference.local import (
     predict_knn,
     predict_resnet18,
     predict_xgboost,
+    compute_grad_cam_from_bytes,
 )
 from backend.schemas import (
     BatchPrediccionResponse,
@@ -227,17 +228,32 @@ async def predict_batch(
         "espontanea": await audio_espontanea.read(),
     }
 
-    probs, umbrales = {}, {}
+    probs, umbrales, expls = {}, {}, {}
     for actividad, audio_bytes in audios.items():
         try:
-            prob, umbral, _ = await _inferir(audio_bytes, modelo, "all")
+            prob, umbral, expl = await _inferir(audio_bytes, modelo, "all")
             probs[actividad]    = round(prob, 4)
             umbrales[actividad] = round(umbral, 4)
+            expls[actividad]    = expl
         except Exception as e:
             raise HTTPException(422, f"Error procesando audio '{actividad}': {e}")
 
     prob_final   = round(sum(probs.values()) / len(probs), 4)
     umbral_medio = round(sum(umbrales.values()) / len(umbrales), 4)
+
+    # Explicabilidad: del audio con mayor probabilidad (más informativo)
+    best_act   = max(probs, key=lambda k: probs[k])
+    mejor_expl = expls[best_act]
+
+    # Grad-CAM: solo para ResNet18
+    grad_cam = None
+    if modelo == "resnet18":
+        resnet_data = _registry.get("resnet18", {}).get("all")
+        if resnet_data:
+            grad_cam = {
+                act: compute_grad_cam_from_bytes(ab, resnet_data["model"])
+                for act, ab in audios.items()
+            }
 
     return BatchPrediccionResponse(
         probabilidad_pd_final=prob_final,
@@ -246,4 +262,6 @@ async def predict_batch(
         umbral_promedio=umbral_medio,
         modelo=modelo,
         detalle_por_actividad=probs,
+        explicabilidad=mejor_expl,
+        grad_cam_por_actividad=grad_cam,
     )

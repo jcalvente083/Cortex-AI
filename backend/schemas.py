@@ -36,7 +36,9 @@ class BatchPrediccionResponse(BaseModel):
     nivel_riesgo:             str
     umbral_promedio:          float
     modelo:                   str
-    detalle_por_actividad:    dict[str, float]   # actividad → prob
+    detalle_por_actividad:    dict[str, float]          # actividad → prob
+    explicabilidad:           Optional[Explicabilidad] = None
+    grad_cam_por_actividad:   Optional[dict[str, Optional[str]]] = None  # actividad → base64 PNG
 
 
 class ModeloInfo(BaseModel):
