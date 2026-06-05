@@ -4,7 +4,7 @@ services:
       context: ..
       dockerfile: deploy/Dockerfile
     ports:
-      - "8000:8000"
+      - "9000:8000"
     volumes:
       - ../models:/app/models:ro
     environment:

@@ -6,6 +6,9 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     libsndfile1 \
     ffmpeg \
+    build-essential \
+    cmake \
+    ninja-build \
     && rm -rf /var/lib/apt/lists/*
 
 # PyTorch CPU — índice separado (ARM64 no tiene CUDA)
@@ -14,7 +17,7 @@ RUN pip install torch torchvision \
     --no-cache-dir
 
 # Resto de dependencias del backend
-COPY requirements-rpi.txt .
+COPY deploy/requirements-rpi.txt .
 RUN pip install -r requirements-rpi.txt --no-cache-dir
 
 # Código fuente (backend + src que necesita extractor.py)
