@@ -114,10 +114,14 @@ def predict_knn(
 
     features: list[str] = data["features"]
     feats = extract_acoustic_features(audio_bytes, features)
-    if not feats or any(v is None for v in feats.values()):
+    if not feats:
         raise ValueError("No se pudieron extraer features acústicas del audio")
 
-    X    = np.array([[feats[f] for f in features]])
+    none_feats = [f for f in features if feats.get(f) is None]
+    if none_feats:
+        print(f"[knn/{activity}] Features None (imputando 0.0): {none_feats}")
+
+    X    = np.array([[feats.get(f) if feats.get(f) is not None else 0.0 for f in features]])
     X_sc = data["scaler"].transform(X)
     prob_pd = float(data["model"].predict_proba(X_sc)[0, 1])
     umbral  = float(data["threshold"])
@@ -157,10 +161,14 @@ def predict_xgboost(
 
     features: list[str] = data["features"]
     feats = extract_acoustic_features(audio_bytes, features)
-    if not feats or any(v is None for v in feats.values()):
+    if not feats:
         raise ValueError("No se pudieron extraer features acústicas del audio")
 
-    X    = np.array([[feats[f] for f in features]])
+    none_feats = [f for f in features if feats.get(f) is None]
+    if none_feats:
+        print(f"[xgb/{activity}] Features None (imputando 0.0): {none_feats}")
+
+    X    = np.array([[feats.get(f) if feats.get(f) is not None else 0.0 for f in features]])
     X_sc = data["scaler"].transform(X)
     prob_pd = float(data["model"].predict_proba(X_sc)[0, 1])
     umbral  = float(data["threshold"])
