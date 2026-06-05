@@ -30,8 +30,6 @@ XGBoost es un algoritmo de ensamble robusto basado en el entrenamiento secuencia
 
 \begin{table}[H]
     \centering
-    \caption{Espacio de búsqueda principal de hiperparámetros para el modelo XGBoost.}
-    \label{tab:grid_xgb}
     \renewcommand{\arraystretch}{1.2}
     \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{6cm} X}
         \toprule
@@ -45,9 +43,11 @@ XGBoost es un algoritmo de ensamble robusto basado en el entrenamiento secuencia
         Submuestreo (\textit{subsample}) & 0.6, 0.7, 0.8, 1.0 \\
         \bottomrule
     \end{tabularx}
+    \caption{Espacio de búsqueda principal de hiperparámetros para el modelo XGBoost.}
+    \label{tab:grid_xgb}
 \end{table}
 
-Es clínicamente imperativo destacar que el hiperparámetro \textit{scale\_pos\_weight} no se buscó de forma aleatoria, sino que se calculó dinámicamente en función de la proporción de clases presentes en los datos de entrenamiento, forzando al modelo a penalizar en mayor medida los errores sobre la clase minoritaria. 
+Cabe destacar que el hiperparámetro \textit{scale\_pos\_weight} no se buscó de forma aleatoria, sino que se calculó dinámicamente en función de la proporción de clases presentes en los datos de entrenamiento, forzando al modelo a penalizar en mayor medida los errores sobre la clase minoritaria. 
 
 % #TODO: AÑADIR LOS VALORES DE PROFUNDIDAD MÁXIMA, No ESTIMADORES Y TASA DE APRENDIZAJE FINALES
 Finalmente, tras completar las iteraciones de búsqueda, la topología óptima del ensamble se conformó mediante [AÑADIR N\_ESTIMATORS] estimadores, limitando su profundidad máxima a [AÑADIR MAX\_DEPTH] niveles y ajustando los pesos con una tasa de aprendizaje de [AÑADIR LR].

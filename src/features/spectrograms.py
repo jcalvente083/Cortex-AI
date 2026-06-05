@@ -28,8 +28,8 @@ warnings.filterwarnings('ignore')
 # =============================================================================
 # CONFIGURACION — deben coincidir con train_resnet.py
 # =============================================================================
-FRAME_LEN_S = 0.4     # duracion de cada frame (segundos)
-HOP_LEN_S   = 0.2     # paso entre frames (segundos)
+FRAME_LEN_S = 1.0     # duracion de cada frame (segundos)
+HOP_LEN_S   = 0.5     # paso entre frames (segundos)
 N_MELS      = 65
 N_FFT       = 512
 N_FFT_HOP_S = 0.03    # hop del STFT interno (segundos)

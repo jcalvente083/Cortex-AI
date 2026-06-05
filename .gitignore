@@ -17,6 +17,8 @@ wheels/
 
 # Audios
 data
+docs
+
 
 # Pesos modelos
 models
@@ -31,15 +33,4 @@ LanzarEmbeddings.MD
 
 
 # LATEX
-*.aux
-*.bbl
-*.blg
-*.fdb_latexmk
-*.fls
-*.lof
-*.log
-*.lot
-*.out
-*.synctex.gz
-*.toc
 

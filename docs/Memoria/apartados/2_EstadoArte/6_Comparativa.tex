@@ -1,74 +1,76 @@
-% ==================== 1.6. COMPARATIVA DE RESULTADOS ====================    
-        \section{Comparativa de resultados, rendimiento y limitaciones}
-        
-        Para la constitución de este Estado del Arte se ha realizado una revisión bibliográfica de la cual se han seleccionado doce estudios, a partir de los cuales se realiza una síntesis comparativa de resultados, considerando la enfermedad objetivo, el tipo de modelo, las características vocales empleadas y las métricas principales reportadas. La Tabla 1 resume la información más relevante y permite observar tendencias comunes y diferencias metodológicas entre los trabajos.
+% ==================== 2.6. COMPARATIVA DE RESULTADOS ====================
+\section{Comparativa de resultados, rendimiento y limitaciones}\label{sec:comparativa}
 
-        \begin{landscape}
-            \begin{table*}[ht]
-                \centering
-                \scriptsize
-                \renewcommand{\arraystretch}{1.2}
-                \setlength{\tabcolsep}{4pt}
-                \begin{tabularx}{\linewidth}{c l l l l l l X}
-                    \toprule
-                    \textbf{Nº} & \textbf{Referencia (año)} & \textbf{Enfermedad} & \textbf{Dataset} & \textbf{Modelo(s)} & \textbf{Features / entrada} & \textbf{Métricas clave} & \textbf{Observaciones} \\
-                    \midrule
-                    1  & García-Gutiérrez et al. (2024)    & Alzheimer  & 1500    & RF, XGB, SVM, KNN                & Paralingüísticas (voz espontánea) & F1: 84--92\%                  & Enfoque ML clásico; dataset grande      \\
-                    2  & Worasawate et al. (2021)          & Parkinson  & 4051    & CNN (LeNet, ResNet, VGG)         & Espectrogramas /aa/               & Acc: 97.7--99.3\%             & Grabaciones móviles; dataset extenso    \\
-                    3  & Tougui et al. (2020)              & Parkinson  & 1490    & SVM, RF, XGB                     & 138 acústicas + cepstrales        & Acc: 95.8\%; Sens: 95.3\%     & Alto rendimiento con features clásicas  \\
-                    4  & Moro-Velázquez et al. (2020--2021) & Parkinson  & 79--89  & GMM-UBM, PLDA                    & x-/i-vectors, MFCC                & Acc: 85--94\%; AUC: 0.91--0.99 & Embeddings robustos; validación cruzada \\
-                    5  & Agbavor \& Liang (2022)           & Alzheimer  & 237     & SVM, RF, LogReg                  & data2vec embeddings               & AUC: 0.835--0.846            & Self-supervised learning                \\
-                    6  & Dao et al. (2025)                 & Parkinson  & n/d     & wav2vec2.0, Whisper, SeamlessM4T & Foundation embeddings             & AUC: 91.4\%                  & Representaciones profundas              \\
-                    7  & Muntaha et al. (2024)             & Parkinson  & n/d     & LSTM-BiGRU + EBM                 & Multisource vocal                 & Acc: 96.3--97.5\%             & Modelo híbrido + XAI                    \\
-                    8  & Shen et al. (2024)                & Parkinson  & 81      & Hybrid CNN-RNN                   & MFCCs, jitter, shimmer            & Acc: 91.1\%; Sens: 92.5\%     & Interpretabilidad con XAI               \\
-                    9  & Gutz et al. (2019)                & ELA        & 123     & SVM                              & ComParE13 (openSMILE)             & AUC: 0.85--0.99              & Detección bulbar temprana               \\
-                    10 & He et al. (2023)                  & Alzheimer  & 119     & RF                               & Acústicas + prosódicas + texto    & Acc: >90\%                   & Enfoque multimodal                      \\
-                    11 & Álvarez Marquina et al. (2022)    & Parkinson  & 1280    & CNN                              & Formantes (/a/)                   & Sens: 96\%; Spec: 99\%        & Alta especificidad                      \\
-                    12 & Tena et al. (CMPB)                & ELA        & n/d     & SVM, RF                          & Quasi-periódicas                  & Acc: 78.7--91\%               & Variabilidad por dataset                \\
-                    \bottomrule
-                \end{tabularx}
-                \caption{Resumen de los estudios seleccionados sobre detección de enfermedades neurodegenerativas mediante análisis de voz.}
-                \label{tab:estudios_neurovoz}
-            \end{table*}
-        \end{landscape}
+Para la constitución de este Estado del Arte se ha realizado una revisión bibliográfica sistemática de la cual se han seleccionado doce estudios de alto impacto. A partir de ellos, se ha elaborado una síntesis comparativa de resultados, considerando la patología objetivo, la arquitectura de modelado, las características vocales empleadas y las métricas de rendimiento reportadas. La Tabla~\ref{tab:estudios_neurovoz} resume la información más relevante y permite observar tendencias metodológicas comunes entre los distintos grupos de investigación.
 
-        \newpage
+\begin{landscape}
+    \begin{table*}[ht]
+        \centering
+        \footnotesize % Subimos el tamaño, ahora tenemos espacio de sobra
+        \renewcommand{\arraystretch}{1.3} % Da un poco de "aire" vertical entre las filas
+        \begin{tabularx}{\linewidth}{
+            c 
+            >{\raggedright\arraybackslash}p{3.5cm} 
+            l 
+            c 
+            >{\raggedright\arraybackslash}X 
+            >{\raggedright\arraybackslash}X 
+            >{\raggedright\arraybackslash}p{2.6cm} 
+            >{\raggedright\arraybackslash}X
+        }
+            \toprule
+            \textbf{Nº} & \textbf{Referencia} & \textbf{Enfermedad} & \textbf{Dataset (N)} & \textbf{Modelo(s)} & \textbf{Características de Entrada} & \textbf{Métricas Clave} & \textbf{Observaciones} \\
+            \midrule
+            1  & García-Gutiérrez et al. \cite{garcia-gutierrezUnveilingSoundCognitive2024}    & Alzheimer  & 1500    & RF, XGB, SVM, KNN                & Paralingüísticas (voz espontánea) & F1: 84--92\%                  & Enfoque ML clásico; dataset de gran volumen      \\
+            2  & Worasawate et al. \cite{worasawate2021}          & Parkinson  & 4051    & CNN (LeNet, ResNet, VGG)         & Espectrogramas /a/ sostenida      & Acc: 97.7--99.3\%             & Grabaciones móviles; alta capacidad de generalización    \\
+            3  & Tougui et al. \cite{tougui2020}              & Parkinson  & 1490    & SVM, RF, XGB                     & 138 acústicas y cepstrales        & Acc: 95.8\%; Sens: 95.3\%     & Alto rendimiento con descriptores clásicos  \\
+            4  & Moro-Velázquez et al. \cite{moro2020, moro2021new} & Parkinson  & 79--89  & GMM-UBM, PLDA                    & x-/i-vectors, MFCC                & Acc: 85--94\%; AUC: 0.91--0.99 & Embeddings robustos; validación cruzada estricta \\
+            5  & Agbavor \& Liang \cite{agbavor2022}           & Alzheimer  & 237     & SVM, RF, LogReg                  & data2vec embeddings               & AUC: 0.835--0.846            & Uso de aprendizaje auto-supervisado                \\
+            6  & Dao et al. \cite{dao2025}                 & Parkinson  & --      & Wav2Vec 2.0, Whisper             & Foundation embeddings             & AUC: 91.4\%                  & Representaciones profundas translingüísticas              \\
+            7  & Muntaha et al. \cite{muntaha2024}             & Parkinson  & --      & LSTM-BiGRU + EBM                 & Multisource vocal                 & Acc: 96.3--97.5\%             & Modelo híbrido con IA Explicable (XAI)                    \\
+            8  & Shen et al. \cite{shen2024}                & Parkinson  & 81      & Hybrid CNN-RNN                   & MFCCs, jitter, shimmer            & Acc: 91.1\%; Sens: 92.5\%     & Alta interpretabilidad clínica con XAI              \\
+            9  & Gutz et al. \cite{gutz2019}                & ELA        & 123     & SVM                              & ComParE13 (openSMILE)             & AUC: 0.85--0.99              & Detección de sintomatología bulbar temprana              \\
+            10 & He et al. \cite{he2023}                  & Alzheimer  & 119     & RF                               & Acústicas + prosódicas + texto    & Acc: >90\%                   & Enfoque multimodal (acústica y PNL)                      \\
+            11 & Álvarez Marquina et al. \cite{alvarez2022}    & Parkinson  & 1280    & CNN                              & Formantes (/a/ sostenida)         & Sens: 96\%; Spec: 99\%        & Alta especificidad diagnóstica                      \\
+            12 & Tena et al. \cite{tenaALS}                & ELA        & --      & SVM, RF                          & Componentes cuasi-periódicas      & Acc: 78.7--91\%               & Variabilidad condicionada al dataset                \\
+            \bottomrule
+        \end{tabularx}
+        \caption{Síntesis de la revisión bibliográfica sobre la detección de enfermedades neurodegenerativas mediante Inteligencia Artificial y análisis de voz.}
+        \label{tab:estudios_neurovoz}
+    \end{table*}
+\end{landscape}
 
-        Como se observa en la tabla \ref{tab:estudios_neurovoz}, los estudios centrados en la enfermedad de Parkinson son los más abundantes y alcanzan los mayores niveles de precisión (97–99\%), especialmente cuando se utilizan modelos profundos basados en espectrogramas o embeddings. En Alzheimer, los resultados se sitúan entre 84\% y 92\%, destacando el uso de características paralingüísticas y modelos auto-supervisados, mientras que en ELA las métricas, varían entre 78\% y 99\%, dependiendo del conjunto de datos. Estas cifras, aunque elevadas, deben interpretarse con cuidado debido a la variedad de métodos usados entre los estudios.
-        
-       \subsection{Resultados por enfermedades}
-            \subsubsection*{Parkinson}
-                    Es la enfermedad más estudiada y aquella donde se han alcanzado los rendimientos más altos. Las precisiones varían entre 85\% y 99\%, con áreas bajo la curva (AUC) cercanas a 0.99 en los estudios de Moro-Velázquez et al. (2020, 2021) y Worasawate et al. (2021). Los modelos basados en CNN y embeddings ofrecen mejor desempeño en bases de datos grandes, mientras que los métodos clásicos (SVM, RF) continúan mostrando eficacia en muestras pequeñas o con características cuidadosamente seleccionadas. La variabilidad en las tareas vocales y la calidad del audio tienen una influencia directa en las métricas obtenidas.
+\newpage
 
-            \subsubsection*{Alzheimer}
-                    Los estudios de Alzheimer presentan resultados sólidos aunque algo más moderados. García-Gutiérrez et al. (2024) lograron valores F1 entre 84\% y 92\% con algoritmos clásicos, mientras que Agbavor y Liang (2022) obtuvieron AUC de 0.835–0.846, utilizando embeddings auto-supervisados (data2vec). En general, los modelos que integran información de voz y texto, como el de He et al. (2023), muestran un mejor rendimiento al capturar tanto alteraciones acústicas como lingüísticas.
+Como se observa en la Tabla~\ref{tab:estudios_neurovoz}, los estudios centrados en la Enfermedad de Parkinson conforman el grueso de la investigación actual y reportan los techos de rendimiento más elevados (97–99\% de precisión), especialmente cuando se aplican arquitecturas profundas sobre espectrogramas o \textit{embeddings}. En la Enfermedad de Alzheimer, las métricas se sitúan en una horquilla del 84\% al 92\%, destacando el uso de características paralingüísticas y modelos auto-supervisados. Por su parte, la varianza en los estudios de Esclerosis Lateral Amiotrófica (78–99\%) subraya la alta dependencia del conjunto de datos. Estas cifras, si bien resultan extraordinariamente prometedoras, exigen una interpretación cautelosa debido a la heterogeneidad metodológica.
 
-            \subsubsection*{Esclerosis Lateral Amiotrófica (ELA)}
-                    En el caso de la ELA, los estudios son menos numerosos pero prometedores. Gutz et al. (2019) alcanzaron AUC de 0.85–0.99 utilizando SVM con features ComParE13, mientras que Tena et al. reportaron precisiones de 78–91\%, según el subconjunto analizado. La detección de la afectación bulbar a partir de la voz demuestra una aplicabilidad clínica potencial, aunque la limitada disponibilidad de datos sigue siendo un obstáculo importante.
-        
+\subsection{Resultados desglosados por patología}
 
-       \subsection{Limitaciones de los estudios}
-           A pesar de los buenos resultados obtenidos, la literatura revisada comparte una serie de limitaciones comunes que reflejan los desafíos actuales del uso de la voz y la IA en el diagnóstico de enfermedades neurodegenerativas.
+\subsubsection*{Enfermedad de Parkinson (EP)}
+Constituye la afección neurodegenerativa más modelada computacionalmente. Las precisiones globales oscilan entre el 85\% y el 99\%, reportándose áreas bajo la curva (AUC) superiores a 0,90 en investigaciones como las de Moro-Velázquez et al. \cite{moro2020, moro2021new} y Worasawate et al. \cite{worasawate2021}. Las Redes Neuronales Convolucionales (CNN) y los modelos fundamentados en \textit{embeddings} exhiben una superioridad clara en corpus de gran volumen, mientras que los algoritmos de \textit{Machine Learning} tradicional (SVM, RF) preservan su eficacia en muestras limitadas sometidas a una selección de características exhaustiva.
 
-            \subsubsection*{a) Escasez y heterogeneidad de los datos}
-                Los tamaños muestrales varían desde unas decenas hasta varios miles de grabaciones, con diferencias notables en idioma, edad y calidad de audio. Esta falta de estandarización impide la comparación directa y reduce la capacidad de generalización de los modelos.
+\subsubsection*{Enfermedad de Alzheimer (EA)}
+La literatura sobre Alzheimer reporta resultados clínicamente sólidos, aunque ligeramente más moderados. García-Gutiérrez et al. \cite{garcia-gutierrezUnveilingSoundCognitive2024} consolidaron puntuaciones F1 de entre el 84\% y el 92\% mediante ensambles clásicos, mientras que Agbavor y Liang \cite{agbavor2022} validaron la idoneidad de los \textit{embeddings} auto-supervisados (data2vec) obteniendo un AUC cercano a 0,84. Se evidencia una tendencia de mejora significativa en aquellos modelos que fusionan la dimensión puramente acústica con el análisis lingüístico \cite{he2023}, al capturar simultáneamente el deterioro motor y el déficit semántico-cognitivo.
 
-            \subsubsection*{b) Diversidad de tareas vocales y condiciones de grabación}
-                Cada estudio utiliza protocolos distintos (vocales sostenidas, lectura o discurso espontáneo), lo que condiciona los biomarcadores detectables. Además, la variabilidad en los dispositivos de grabación —desde micrófonos profesionales hasta smartphones— introduce ruido y afecta la fiabilidad de los resultados.
+\subsubsection*{Esclerosis Lateral Amiotrófica (ELA)}
+El volumen de publicaciones orientadas a la ELA es menor, pero sus hallazgos son determinantes. Gutz et al. \cite{gutz2019} demostraron la viabilidad de detectar la afectación bulbar preclínica alcanzando un AUC de 0,85–0,99 mediante el conjunto de descriptores ComParE13. Paralelamente, Tena et al. \cite{tenaALS} reportaron precisiones de hasta el 91\% empleando vectores cuasi-periódicos. La principal barrera en este dominio continúa siendo la limitada disponibilidad de bases de datos públicas de pacientes con ELA.
 
-            \subsubsection*{c) Validación interna y riesgo de sobreajuste}
-                La mayoría de los trabajos aplican validaciones cruzadas internas (k-fold, Leave-One-Out), sin evaluar los modelos sobre conjuntos de prueba independientes. Esto puede inflar las métricas de precisión y ocultar problemas de sobreajuste, especialmente en redes profundas con pocos datos.
+\subsection{Limitaciones transversales de los estudios}
+A pesar de los altos índices de precisión reportados, la revisión exhaustiva de la literatura pone de manifiesto una serie de limitaciones estructurales que condicionan la generalización clínica de los modelos actuales:
 
-            \subsubsection*{d) Métricas inconsistentes y ausencia de intervalos de confianza}
-                Los estudios reportan diferentes métricas (accuracy, F1, AUC, sensibilidad, especificidad), dificultando la comparación objetiva. En general, los valores son altos, pero rara vez se acompañan de intervalos de confianza o análisis estadísticos que permitan valorar su significación.
+\begin{itemize}
+    \item \textbf{Escasez y heterogeneidad de los datos:} Las muestras oscilan desde unas pocas decenas hasta varios miles de sujetos, presentando asimetrías severas en idioma, rango de edades y calidad de captura. Esta falta de estandarización obstaculiza el análisis comparativo e induce sesgos demográficos.
+    
+    \item \textbf{Divergencia en tareas vocales e instrumentación:} La amalgama de protocolos fonatorios (vocales sostenidas, lectura dirigida o habla espontánea) altera fundamentalmente los biomarcadores subyacentes. Asimismo, la variabilidad del hardware (desde micrófonos calibrados en cabinas insonorizadas hasta \textit{smartphones} en entornos ruidosos) compromete la fiabilidad del espectro acústico.
+    
+    \item \textbf{Validación interna y riesgo de sobreajuste (\textit{Overfitting}):} La inmensa mayoría de las investigaciones restringe su evaluación a técnicas de validación cruzada interna (\textit{K-Fold}), omitiendo la validación sobre corpus de prueba externos e independientes. Este déficit procedimental puede inflar artificialmente las métricas, especialmente en arquitecturas de \textit{Deep Learning} entrenadas con corpus reducidos.
+    
+    \item \textbf{Inconsistencia métrica y estadística:} La carencia de un estándar de reporte (alternando \textit{Accuracy}, F1-Score, Sensibilidad o AUC) dificulta la evaluación cruzada. Además, es infrecuente la publicación de intervalos de confianza o pruebas de significancia que respalden la solidez de los porcentajes obtenidos.
+    
+    \item \textbf{Opacidad algorítmica (\textit{Black Box}):} La interpretabilidad sigue constituyendo una barrera para la adopción clínica. Solo investigaciones muy recientes \cite{shen2024, muntaha2024} han comenzado a incorporar técnicas de Inteligencia Artificial Explicable (XAI) para auditar qué descriptores acústicos impulsan las decisiones de la red neuronal.
+\end{itemize}
 
-            \subsubsection*{e) Falta de interpretabilidad}
-                La mayoría de los modelos profundos actúan como “cajas negras”. Solo algunos estudios recientes (Shen et al., 2024; Muntaha et al., 2024) han incorporado técnicas de Explainable AI (XAI) que permiten identificar qué features vocales influyen en la decisión del modelo. La interpretabilidad sigue siendo clave para su aceptación clínica
+\subsection{Conclusiones de la revisión}
+El análisis de la literatura consolida un patrón inequívoco: las arquitecturas de aprendizaje profundo y los modelos fundacionales representan el techo de rendimiento actual en la detección de patologías neurodegenerativas mediante la voz, logrando precisiones que rozan el 99\% en Parkinson y áreas bajo la curva superiores a 0,90 en Alzheimer y ELA. 
 
-
-            En conjunto, estas limitaciones muestran un campo todavía en construcción. La combinación de datasets pequeños, falta de estandarización y escasa validación hace que los valores de precisión reportados deban interpretarse como una estimación potencial más que como resultados clínicamente generalizables.
-
-        \subsection{Conclusiones}
-            La comparación de los doce estudios revisados permite identificar un patrón claro: los modelos de aprendizaje profundo y de embeddings son los más eficaces en la detección de alteraciones vocales asociadas a enfermedades neurodegenerativas, alcanzando precisiones de hasta el 99\% en Parkinson y AUC superiores al 0.9 en Alzheimer y ELA. Sin embargo, el progreso del campo depende de superar desafíos estructurales como la falta de datos estandarizados, la validación clínica limitada y la necesidad de modelos más explicables.
-
-            En resumen, la evidencia actual demuestra el enorme potencial de la voz como biomarcador y de la IA como herramienta diagnóstica, y subraya la importancia de avanzar hacia protocolos uniformes, bases de datos abiertas, evaluaciones externas y modelos transparentes que permitan trasladar estos avances al ámbito médico real.
+Sin embargo, la madurez de la disciplina está supeditada a la resolución de sus vulnerabilidades estructurales. La evidencia actual ratifica el inmenso potencial de la señal de voz como biomarcador digital; no obstante, el avance hacia el diagnóstico clínico real exigirá la adopción de protocolos de captura estandarizados, la evaluación sistemática sobre conjuntos de datos externos y la integración obligatoria de mecanismos de explicabilidad (XAI).

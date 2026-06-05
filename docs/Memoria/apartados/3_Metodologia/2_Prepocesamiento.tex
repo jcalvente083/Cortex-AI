@@ -96,7 +96,7 @@
                 \item \textbf{Asociadas al temblor neuromotor:} ATRI.
             \end{itemize}
 
-        \begin{figure}[p]
+            \begin{figure}[htbp]
             \centering
             \begin{subfigure}[b]{\textwidth}
                 \centering
@@ -154,7 +154,7 @@
 
         A nivel clínico, se observa empíricamente un incremento en las medidas de inestabilidad vocal (rPPQ y ShimmerDb) en el grupo patológico, congruente con la pérdida de control neuromotor característica de la disartria hipocinética. Asimismo, el índice de temblor de amplitud (ATRI) muestra una alteración en su distribución. 
 
-        El análisis estadístico exhaustivo de la totalidad de las variables extraídas inicialmente, así como las representaciones gráficas de sus distribuciones, diagramas de violín y matrices de dispersión, se encuentran detallados de forma íntegra en el \textbf{\hyperref[app:eda]{Apéndice C}}.
+        El análisis estadístico exhaustivo de la totalidad de las variables extraídas inicialmente, así como las representaciones gráficas de sus distribuciones, diagramas de violín y matrices de dispersión, se encuentran detallados de forma íntegra en el \textbf{\hyperref[app:anexo_eda]{Apéndice~\ref*{app:anexo_eda}}}.
 
 
             
@@ -182,17 +182,17 @@
         \begin{figure}[H]
         \centering
         % Espectrograma Sujeto Sano
-        \begin{subfigure}[b]{0.48\textwidth}
+        \begin{subfigure}[b]{0.46\textwidth}
             \centering
-            \includegraphics[width=\textwidth]{imagenes/espectrograma_sano.png}
+            \includegraphics[width=\textwidth, height=0.22\textheight, keepaspectratio]{imagenes/espectrograma_sano.png}
             \caption{Sujeto de Control (HC)}
             \label{fig:spec_sano}
         \end{subfigure}
         \hfill
         % Espectrograma Paciente Parkinson
-        \begin{subfigure}[b]{0.48\textwidth}
+        \begin{subfigure}[b]{0.46\textwidth}
             \centering
-            \includegraphics[width=\textwidth]{imagenes/espectrograma_parkinson.png}
+            \includegraphics[width=\textwidth, height=0.22\textheight, keepaspectratio]{imagenes/espectrograma_parkinson.png}
             \caption{Paciente con Parkinson (PD)}
             \label{fig:spec_parkinson}
         \end{subfigure}
@@ -202,7 +202,7 @@
     \end{figure}
 
 
-    \subsection{Extracción de embeddings acústicos mediante Wav2Vec 2.0}
+    \subsection{Extracción de embeddings acústicos mediante Wav2Vec 2.0}\label{subsec:embeddings}
 
     De forma complementaria a la extracción de características acústicas manuales y a la generación de espectrogramas, se exploró el uso de modelos fundacionales de aprendizaje profundo para la obtención de representaciones latentes de alto nivel (\textit{embeddings}). Para este propósito, se implementó la arquitectura \textbf{Wav2Vec 2.0} \cite{baevski2020}, un modelo de vanguardia desarrollado por Meta AI basado en aprendizaje auto-supervisado (\textit{Self-Supervised Learning}).
 

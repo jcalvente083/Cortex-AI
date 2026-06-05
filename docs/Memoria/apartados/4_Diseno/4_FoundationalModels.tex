@@ -1,6 +1,6 @@
 \section{Foundation Models: Extracción de características con Wav2Vec 2.0 y Clasificación}\label{sec:foundational_models}
 
-Como se describió en la Sección~\ref{sec:wav2vec_extraction}, el proceso de extracción de \textit{embeddings} proyecta cada grabación de audio en un vector continuo de 1024 dimensiones mediante \textit{Global Average Pooling} sobre los estados ocultos de la última capa del modelo \textit{Transformer}. Este enfoque permite explorar si las representaciones latentes, aprendidas de forma auto-supervisada sobre grandes corpus de habla, son inherentemente discriminativas para la detección de la Enfermedad de Parkinson.
+Como se describió en la Sección~\ref{subsec:embeddings}, el proceso de extracción de \textit{embeddings} proyecta cada grabación de audio en un vector continuo de 1024 dimensiones mediante \textit{Global Average Pooling} sobre los estados ocultos de la última capa del modelo \textit{Transformer}. Este enfoque permite explorar si las representaciones latentes, aprendidas de forma auto-supervisada sobre grandes corpus de habla, son inherentemente discriminativas para la detección de la Enfermedad de Parkinson.
 
 Una vez obtenido el espacio dimensional de los \textit{embeddings}, el flujo de clasificación incorpora las mismas dos familias de algoritmos empleadas sobre las características acústicas manuales (KNN y XGBoost). Esta simetría metodológica permite realizar una comparación directa entre la capacidad representacional de ambas modalidades de entrada.
 
@@ -9,9 +9,9 @@ Una vez obtenido el espacio dimensional de los \textit{embeddings}, el flujo de 
 Un vector de 1024 dimensiones presenta una elevada carga computacional y es susceptible a la \textit{maldición de la dimensionalidad} para algoritmos basados en vecindad como KNN. La densidad del espacio crece exponencialmente con la dimensión, degradando la discriminabilidad de las métricas de distancia. Para mitigar este efecto, se aplicó un \textit{pipeline} de preprocesamiento compuesto por dos etapas sucesivas.
 
 En primer lugar, se estandarizó cada dimensión del espacio de \textit{embeddings} aplicando \textit{StandardScaler}, transformando linealmente cada componente para que presente media nula y varianza unitaria:
-\begin{equation}
+\[
     z_i = \frac{x_i - \mu_i}{\sigma_i}
-\end{equation}
+\]
 
 Esta normalización es un requisito matemático imprescindible antes de ejecutar el Análisis de Componentes Principales (PCA), evitando que las dimensiones con mayor amplitud dominen la dirección de máxima varianza \cite{pedregosa2012}. Seguidamente, se aplicó el PCA, proyectando el espacio estandarizado de 1024 dimensiones sobre los 50 componentes principales que maximizan la varianza explicada acumulada. La matriz de transformación se ajustó exclusivamente sobre los datos de entrenamiento y se aplicó de forma independiente al conjunto de validación y al \textit{holdout} externo, previniendo cualquier fuga de información (\textit{Data Leakage}).
 
@@ -31,8 +31,6 @@ De forma análoga, el modelo XGBoost fue entrenado sobre los 50 componentes prin
 
 \begin{table}[H]
     \centering
-    \caption{Espacio de búsqueda de hiperparámetros para XGBoost sobre embeddings Wav2Vec 2.0.}
-    \label{tab:grid_xgb_emb}
     \renewcommand{\arraystretch}{1.2}
     \begin{tabularx}{0.8\textwidth}{>{\raggedright\arraybackslash}X >{\centering\arraybackslash}X}
         \toprule
@@ -49,6 +47,8 @@ De forma análoga, el modelo XGBoost fue entrenado sobre los 50 componentes prin
         Regularización L2 (\textit{reg\_lambda}) & 1.0, 3.0, 10.0 \\
         \bottomrule
     \end{tabularx}
+    \caption{Espacio de búsqueda de hiperparámetros para XGBoost sobre embeddings Wav2Vec 2.0.}
+    \label{tab:grid_xgb_emb}
 \end{table}
 
 % #TODO: AÑADIR LOS PARAMETROS FINALES.
