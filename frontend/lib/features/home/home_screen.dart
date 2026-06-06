@@ -17,15 +17,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               const Spacer(),
               Center(
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: AppTheme.primary.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.psychology, size: 56, color: AppTheme.primary),
-                ),
+                child: Image.asset('assets/logo.png', width: 120, height: 120),
               ),
               const SizedBox(height: 20),
               Text(

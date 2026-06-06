@@ -12,15 +12,7 @@ class InfoScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         children: [
           Center(
-            child: Container(
-              width: 80,
-              height: 80,
-              decoration: const BoxDecoration(
-                color: AppTheme.primary,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.psychology, size: 44, color: Colors.white),
-            ),
+            child: Image.asset('assets/logo.png', width: 100, height: 100),
           ),
           const SizedBox(height: 16),
           Text('Cortex-AI',
