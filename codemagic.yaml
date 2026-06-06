@@ -15,5 +15,12 @@ workflows:
         script: |
           cd frontend
           flutter build ipa --release --no-codesign
+          # Empaquetar .app del xcarchive como .ipa unsigned para Sideloadly
+          APP_PATH="build/ios/archive/Runner.xcarchive/Products/Applications/Runner.app"
+          mkdir -p build/ios/ipa/Payload
+          cp -r "$APP_PATH" build/ios/ipa/Payload/
+          cd build/ios/ipa
+          zip -r CortexAI.ipa Payload
+          rm -rf Payload
     artifacts:
-      - frontend/build/ios/ipa/*.ipa
+      - frontend/build/ios/ipa/CortexAI.ipa
