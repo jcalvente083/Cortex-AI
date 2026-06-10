@@ -115,10 +115,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const Divider(height: 32),
-          const _InfoTile(
-            icon: Icons.cloud_outlined,
-            text: 'Los modelos cloud (wav2vec) requieren configurar CLOUD_API_URL en el servidor RPi5.',
-          ),
           const SizedBox(height: 8),
           const _InfoTile(
             icon: Icons.lock_outline,

@@ -66,35 +66,41 @@ class _RecordingViewState extends State<_RecordingView> {
               color: AppTheme.primary,
             ),
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    if (_step == 2) ...[
-                      SceneWidget(sceneIndex: session.sceneIndex),
-                      const SizedBox(height: 16),
-                    ],
-                    RecorderCard(
-                      index:        _step,
-                      label:        slot.label,
-                      instruction:  slot.instruction,
-                      recordedFile: slot.file,
-                      onRecorded:   (file) => session.setFile(_step, file),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
+              child: LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight - 32),
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Icon(Icons.lock_outline, size: 13, color: Colors.grey[400]),
-                        const SizedBox(width: 4),
-                        Text(
-                          'El audio no se almacena en el servidor',
-                          style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                        if (_step == 2) ...[
+                          SceneWidget(sceneIndex: session.sceneIndex),
+                          const SizedBox(height: 16),
+                        ],
+                        RecorderCard(
+                          index:        _step,
+                          label:        slot.label,
+                          instruction:  slot.instruction,
+                          recordedFile: slot.file,
+                          onRecorded:   (file) => session.setFile(_step, file),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.lock_outline, size: 13, color: Colors.grey[400]),
+                            const SizedBox(width: 4),
+                            Text(
+                              'El audio no se almacena en el servidor',
+                              style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),

@@ -57,39 +57,57 @@ class _GaugePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height);
-    final radius = size.width / 2 - 10;
+    final radius = size.width / 2 - 14;
+    final rect   = Rect.fromCircle(center: center, radius: radius);
 
-    // Arc segments: low (green), medium (yellow), high (red)
-    final segmentPaint = Paint()..style = PaintingStyle.stroke..strokeWidth = 18..strokeCap = StrokeCap.butt;
+    final isLow  = probability < threshold * 0.6;
+    final isMid  = probability >= threshold * 0.6 && probability < threshold;
+    final isHigh = probability >= threshold;
 
-    final rect = Rect.fromCircle(center: center, radius: radius);
+    final activeColor = isHigh ? AppTheme.danger : (isMid ? AppTheme.warning : AppTheme.success);
 
-    // Green: 0–60% of threshold
-    segmentPaint.color = AppTheme.success.withValues(alpha: 0.25);
-    canvas.drawArc(rect, pi, pi * 0.6, false, segmentPaint);
+    final track = Paint()
+      ..style      = PaintingStyle.stroke
+      ..strokeWidth = 20
+      ..strokeCap  = StrokeCap.butt;
 
-    // Yellow: 60–100% of threshold
-    segmentPaint.color = AppTheme.warning.withValues(alpha: 0.25);
-    canvas.drawArc(rect, pi + pi * 0.6, pi * 0.4 * threshold, false, segmentPaint);
+    // Green: 0 → threshold*0.6
+    track.color = isLow
+        ? AppTheme.success
+        : AppTheme.success.withValues(alpha: 0.18);
+    canvas.drawArc(rect, pi, pi * threshold * 0.6, false, track);
 
-    // Red: above threshold
-    segmentPaint.color = AppTheme.danger.withValues(alpha: 0.25);
-    canvas.drawArc(rect, pi + pi * threshold, pi * (1 - threshold), false, segmentPaint);
+    // Yellow: threshold*0.6 → threshold
+    track.color = isMid
+        ? AppTheme.warning
+        : AppTheme.warning.withValues(alpha: 0.18);
+    canvas.drawArc(rect, pi + pi * threshold * 0.6, pi * threshold * 0.4, false, track);
 
-    // Needle
-    final angle = pi + pi * probability;
-    final needleEnd = Offset(
-      center.dx + radius * cos(angle),
-      center.dy + radius * sin(angle),
+    // Red: threshold → 1
+    track.color = isHigh
+        ? AppTheme.danger
+        : AppTheme.danger.withValues(alpha: 0.18);
+    canvas.drawArc(rect, pi + pi * threshold, pi * (1 - threshold), false, track);
+
+    // Needle pointing to exact probability position
+    final angle      = pi + pi * probability;
+    final needleLen  = radius - 8;
+    final needleEnd  = Offset(
+      center.dx + needleLen * cos(angle),
+      center.dy + needleLen * sin(angle),
     );
-    final needlePaint = Paint()
-      ..color = Colors.black87
-      ..strokeWidth = 3
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(center, needleEnd, needlePaint);
+    canvas.drawLine(
+      center,
+      needleEnd,
+      Paint()
+        ..color      = activeColor
+        ..strokeWidth = 3.5
+        ..strokeCap  = StrokeCap.round,
+    );
 
-    // Center dot
-    canvas.drawCircle(center, 6, Paint()..color = Colors.black87);
+    // Center dot: colored ring + white fill
+    canvas.drawCircle(center, 8, Paint()..color = activeColor);
+    canvas.drawCircle(center, 4, Paint()..color = Colors.white);
   }
 
   @override

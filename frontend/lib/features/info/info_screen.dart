@@ -21,7 +21,7 @@ class InfoScreen extends StatelessWidget {
                   .textTheme
                   .headlineSmall
                   ?.copyWith(fontWeight: FontWeight.bold, color: AppTheme.primary)),
-          Text('v1.0.0 — TFG Ingeniería Informática',
+          Text('v1.0.0',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey)),
           const SizedBox(height: 24),
@@ -34,11 +34,11 @@ class InfoScreen extends StatelessWidget {
           ),
           _Section(
             title: 'Modelos disponibles',
-            content: '• KNN (K-Nearest Neighbors): features acústicas clásicas.\n'
-                '• XGBoost: gradient boosting con explicabilidad SHAP.\n'
-                '• ResNet18: mel-espectrogramas con visión por computador.\n'
-                '• Wav2Vec2 Embeddings: embeddings de audio con transformers (cloud).\n'
-                '• Wav2Vec2 Fine-tune: fine-tuning end-to-end (cloud).',
+            content: '• KNN (K-Nearest Neighbors). Incluye explicabilidad Feature Deviation.\n'
+                '• XGBoost: Añade explicabilidad SHAP.\n'
+                '• ResNet18: sobre espectrogramas mel con explicabilidad GRAD-CAM.\n'
+                '• Wav2Vec2 Embeddings: embeddings de audio con transformers y posterior clasificación con ML Tradicional.\n'
+                '• Wav2Vec2 Fine-tune: fine-tuning end-to-end   (cloud).',
           ),
           _Section(
             title: 'Protocolo de grabación',

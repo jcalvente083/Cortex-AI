@@ -117,7 +117,7 @@ class ExplainabilityChart extends StatelessWidget {
           children: [
             _Legend(color: AppTheme.danger, label: 'Indica Parkinson'),
             const SizedBox(width: 16),
-            _Legend(color: AppTheme.success, label: 'Indica Control'),
+            _Legend(color: AppTheme.success, label: 'Indica Sano'),
           ],
         ),
       ],
