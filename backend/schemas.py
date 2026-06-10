@@ -22,7 +22,7 @@ class Explicabilidad(BaseModel):
 
 class PrediccionResponse(BaseModel):
     probabilidad_pd: float    # [0.0 – 1.0]
-    prediccion:      str      # "Control" | "Parkinson"
+    prediccion:      str      # "Sano" | "Parkinson"
     nivel_riesgo:    str      # "Bajo" | "Medio" | "Alto"
     umbral:          float
     modelo:          str

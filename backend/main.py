@@ -197,7 +197,7 @@ async def predict(
 
     return PrediccionResponse(
         probabilidad_pd=round(prob_pd, 4),
-        prediccion="Parkinson" if prob_pd >= umbral else "Control",
+        prediccion="Parkinson" if prob_pd >= umbral else "Sano",
         nivel_riesgo=_nivel_riesgo(prob_pd, umbral),
         umbral=round(umbral, 4),
         modelo=modelo,
@@ -257,7 +257,7 @@ async def predict_batch(
 
     return BatchPrediccionResponse(
         probabilidad_pd_final=prob_final,
-        prediccion="Parkinson" if prob_final >= umbral_medio else "Control",
+        prediccion="Parkinson" if prob_final >= umbral_medio else "Sano",
         nivel_riesgo=_nivel_riesgo(prob_final, umbral_medio),
         umbral_promedio=umbral_medio,
         modelo=modelo,
