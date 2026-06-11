@@ -16,11 +16,11 @@ notebooks/
 # IDE
 .vscode/
 
-# Datos y audios (demasiado grandes)
-data/
+# Datos y audios (demasiado grandes) — solo raíz
+/data/
 
-# Pesos de modelos
-models/
+# Pesos de modelos — solo raíz
+/models/
 
 # Figuras y reportes generados por los scripts
 reports/
