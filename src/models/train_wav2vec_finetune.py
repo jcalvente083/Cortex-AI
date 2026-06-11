@@ -68,7 +68,7 @@ warnings.filterwarnings('ignore')
 # =============================================================================
 # PATHS
 # =============================================================================
-DATA_ROOT    = Path("/data")
+DATA_ROOT    = Path("/data1")
 TRAIN_CSV    = DATA_ROOT / "data/processed/combined/train_80.csv"
 HOLDOUT_CSV  = DATA_ROOT / "data/processed/combined/holdout_20.csv"
 REPORTS_BASE = Path("reports/wav2vec_finetune/Wav2Vec2")
