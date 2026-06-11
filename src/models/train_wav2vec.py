@@ -91,6 +91,9 @@ PCA_VARIANCE: float     = 0.95   # fracción de varianza explicada acumulada
 # TEE
 # =============================================================================
 class Tee:
+    def isatty(self):
+        return False
+
     def __init__(self, log_path: Path):
         self._log_path = log_path
         self._log_file = None

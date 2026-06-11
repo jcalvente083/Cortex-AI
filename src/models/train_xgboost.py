@@ -96,6 +96,9 @@ ACTIVITIES: dict[str, list[str]] = {
 class Tee:
     """Redirige sys.stdout para escribir simultaneamente a consola y log."""
 
+    def isatty(self):
+        return False
+
     def __init__(self, log_path: Path):
         self._log_path = log_path
         self._log_file = None

@@ -30,8 +30,8 @@ if ! command -v uv &>/dev/null; then
     exit 1
 fi
 
-if python3 -c "import torch; assert torch.cuda.is_available()" 2>/dev/null; then
-    GPU=$(python3 -c "import torch; print(torch.cuda.get_device_name(0))")
+if uv run python -c "import torch; assert torch.cuda.is_available()" 2>/dev/null; then
+    GPU=$(uv run python -c "import torch; print(torch.cuda.get_device_name(0))")
     echo "[✓] GPU detectada: ${GPU}"
 else
     echo "[!] AVISO: no se detecta CUDA. El finetune sin GPU tardará días."
