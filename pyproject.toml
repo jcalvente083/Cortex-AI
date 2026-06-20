@@ -32,6 +32,7 @@ dependencies = [
     "httpx>=0.28.1",
     "modal>=1.4.3",
     "pypdf2>=3.0.1",
+    "docx2pdf>=0.1.8",
 ]
 
 [[tool.uv.index]]
